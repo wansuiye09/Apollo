@@ -16,6 +16,9 @@ require "rails/test_unit/railtie"
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)
 
+# Load configuration values.
+Dotenv::Railtie.load if defined?(Dotenv::Railtie)
+
 module Apollo
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
@@ -29,5 +32,12 @@ module Apollo
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
+
+    # Use Pry for the console
+    console do
+      require 'pry'
+      config.console = Pry
+      TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
+    end
   end
 end

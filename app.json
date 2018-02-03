@@ -1,0 +1,55 @@
+{
+  "name": "Apollo",
+  "description": "Crowdsourced data labeler to create labeled training datasets for machine learning.",
+  "keywords": [
+    "crownsourced",
+    "data labeling",
+    "dataset construction",
+    "machine learning"
+  ],
+  "website": "https://github.com/KazTech/Apollo",
+  "repository": "https://github.com/KazTech/Apllo",
+  "success_url": "/welcome",
+  "scripts": {
+    "postdeploy": "rails db:schema:load db:seed"
+  },
+  "env": {
+    "SECRET_KEY_BASE": {
+      "description": "A secret key for verifying the integrity of signed cookies.",
+      "generator": "secret"
+    },
+    "RAILS_ENV": {
+      "description": "The Rails application environment to run in.",
+      "value": "production"
+    },
+    "PASSENGER_POOL": {
+      "description": "The pool size for Passenger.",
+      "value": "3"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "hobby"
+    }
+  },
+  "image": "heroku/ruby",
+  "addons": [
+    {
+      "plan": "heroku-postgresql:hobby-dev",
+      "options": {
+        "version": "10.1"
+      }
+    },
+    {
+      "plan": "heroku-redis:hobby-dev"
+    }
+  ],
+  "environments": {
+    "test": {
+      "scripts": {
+        "test": "rails test"
+      }
+    }
+  }
+}
