@@ -35,7 +35,7 @@ gem 'pry', '~> 0.11.0', require: false
 group :development, :test do
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-byebug', '~> 3.5.0'
-  gem 'dotenv', '~> 2.2.0'
+  gem 'dotenv-rails', '~> 2.2.0'
 end
 
 group :development do

@@ -1,21 +1,17 @@
-const defaultConfig = require('./environment')
-const merge         = require('webpack-merge');
-const devConfig  = {
-  module: {
-    rules: [
-      // Pug (Slim)
-      {
-        test: /\.pug$/,
-        loader: 'pug-static-loader',
-        options: {
-          pretty: true,
-          locals: {
-            api_url: 'http://localhost:3000'
-          }
-        }
-      }
-    ]
-  }
-};
+const environment = require('./environment')
+const WebpackHtmlPlugin = require('html-webpack-plugin')
+const { resolve } = require('path')
+const root = resolve(process.cwd())
 
-module.exports = merge(defaultConfig, devConfig);
+environment.plugins.append(
+  'WebpackHtmlPlugin',
+  new WebpackHtmlPlugin({
+    chunks: ['main'],
+    template: 'app/browser/html/main.pug',
+    filename: 'main.html'
+  })
+)
+
+environment.config.devServer.contentBase = root + '/app/browser/static'
+
+module.exports = environment.toWebpackConfig()

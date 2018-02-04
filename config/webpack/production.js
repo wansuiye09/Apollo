@@ -1,21 +1,19 @@
-const defaultConfig = require('./environment')
-const merge         = require('webpack-merge');
-const prodConfig     = {
-  module: {
-    rules: [
-      // Pug (Slim)
-      {
-        test: /\.pug$/,
-        loader: 'pug-static-loader',
-        options: {
-          pretty: true,
-          locals: {
-            api_url: process.env.API_URL || '/'
-          }
-        }
-      }
-    ]
-  }
-};
+const environment = require('./environment')
+const WebpackHtmlPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-module.exports = merge(defaultConfig, prodConfig);
+environment.plugins.append(
+  'CopyWebpackPlugin',
+  new CopyWebpackPlugin([{ from: 'app/browser/static', to: '..' }])
+)
+
+environment.plugins.append(
+  'WebpackHtmlPlugin',
+  new WebpackHtmlPlugin({
+    chunks: ['main'],
+    template: 'app/browser/html/main.pug',
+    filename: '../main.html'
+  })
+)
+
+module.exports = environment.toWebpackConfig()

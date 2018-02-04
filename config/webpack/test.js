@@ -1,3 +1,3 @@
 const environment = require('./environment')
 
-module.exports = environment
+module.exports = environment.toWebpackConfig()

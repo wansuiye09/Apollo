@@ -1,52 +1,33 @@
 var { environment }     = require('@rails/webpacker')
 const elm               =  require('./loaders/elm')
-const webpack           = require('webpack');
-const merge             = require('webpack-merge');
-const WebpackHtmlPlugin = require( 'html-webpack-plugin' );
-const CopyWebpackPlugin = require('copy-webpack-plugin');
+const pug               =  require('./loaders/pug')
+const webpack           = require('webpack')
 
+environment.loaders.append('elm', elm)
+environment.loaders.append('pug', pug)
 
-environment.loaders.append('elm', elm);
-environment = environment.toWebpackConfig();
+const sassEnvIndex = environment.loaders.findIndex(function(element) {
+  return element.key == 'sass';
+})
 
-const commonConfig = {
-  plugins: [
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery',
-      'window.jQuery': 'jquery',
-      Hammer: 'hammerjs/hammer'
-    }),
-    new WebpackHtmlPlugin({
-      chunks: ['main'],
-      template: 'app/browser/html/main.pug',
-      filename: '../main.html',
-    }),
-    new CopyWebpackPlugin([{ from: 'app/browser/static', to: '..' }])
-  ],
-  module: {
-    rules: [
-      // CSS Loader
-      {
-        test: /\.(scss|sass)$/i,
-        loaders: [
-          { loader: 'sass-loader', options: { includePaths: ['node_modules'] } }
-        ]
-      },
-      {
-        test: /\.(woff|woff2)(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/font-woff'
-      },
-      {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'url-loader?limit=10000&mimetype=application/octet-stream'
-      },
-      {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        loader: 'file-loader'
-      }
-    ]
-  }
-};
+const sassLoaderIndex = environment.loaders[sassEnvIndex].value.use.findIndex(function(element) {
+  return element.loader == 'sass-loader';
+})
 
-module.exports = merge(environment, commonConfig);
+if (Array.isArray(environment.loaders[sassEnvIndex].value.use[sassLoaderIndex].options.includePaths)) {
+  environment.loaders[sassEnvIndex].value.use[sassLoaderIndex].options.includePaths.append('node_modules')
+} else {
+  environment.loaders[sassEnvIndex].value.use[sassLoaderIndex].options.includePaths = ['node_modules']
+}
+
+environment.plugins.append(
+  'ProvidePlugin',
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery',
+    'window.jQuery': 'jquery',
+    Hammer: 'hammerjs/hammer'
+  })
+)
+
+module.exports = environment;
