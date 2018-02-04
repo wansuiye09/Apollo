@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import Main.Ports exposing (..)
 import Html exposing (Html, h1, text)
 import Html.Attributes exposing (style)
 
@@ -8,16 +9,20 @@ import Html.Attributes exposing (style)
 
 
 type alias Model =
-    {}
+    { flags : Flags }
+
+
+type alias Flags =
+    { apiUrl : String }
 
 
 
 -- INIT
 
 
-init : ( Model, Cmd Message )
-init =
-    ( Model, Cmd.none )
+init : Flags -> ( Model, Cmd Message )
+init flags =
+    ( { flags = flags }, initPort "" )
 
 
 
@@ -62,9 +67,9 @@ subscriptions model =
 -- MAIN
 
 
-main : Program Never Model Message
+main : Program Flags Model Message
 main =
-    Html.program
+    Html.programWithFlags
         { init = init
         , view = view
         , update = update
