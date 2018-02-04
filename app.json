@@ -22,13 +22,25 @@
       "description": "The Rails application environment to run in.",
       "value": "production"
     },
+    "RAILS_LOG_TO_STDOUT": {
+      "description": "Log in a tagged format to STDOUT.",
+      "value": "true"
+    },
     "PASSENGER_POOL": {
       "description": "The pool size for Passenger.",
       "value": "3"
+    },
+    "SIDEKIQ_CONCURRENCY": {
+      "description": "The number of workers per Sidekiq process.",
+      "value": "10"
     }
   },
   "formation": {
     "web": {
+      "quantity": 1,
+      "size": "hobby"
+    },
+    "sidekiq": {
       "quantity": 1,
       "size": "hobby"
     }
@@ -43,6 +55,12 @@
     },
     {
       "plan": "heroku-redis:hobby-dev"
+    },
+    {
+      "plan": "auth0:free",
+      "options": {
+        "type": "rails"
+      }
     }
   ],
   "environments": {

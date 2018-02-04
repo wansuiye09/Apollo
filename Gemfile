@@ -16,10 +16,15 @@ gem 'passenger', '~> 5.2.0'
 gem 'webpacker', '~> 3.2.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
-# Use Redis adapter to run Action Cable in production
+# Use Redis for caching
 gem 'redis', '~> 3.0'
-# Use ActiveModel has_secure_password
-# gem 'bcrypt', '~> 3.1.7'
+gem 'redis-rails', '~> 5.0'
+
+# Use Sidekiq fo background jobs
+gem 'sidekiq', '~> 5.1'
+
+# Use Omniauth with Auth0 for authentication
+gem 'omniauth-auth0', '~> 2.0'
 
 # Use Pry instead of IRB
 gem 'pry', '~> 0.11.0', require: false
