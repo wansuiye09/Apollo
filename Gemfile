@@ -23,9 +23,6 @@ gem 'redis-rails', '~> 5.0'
 # Use Sidekiq fo background jobs
 gem 'sidekiq', '~> 5.1'
 
-# Use Omniauth with Auth0 for authentication
-gem 'omniauth-auth0', '~> 2.0'
-
 # Use Pry instead of IRB
 gem 'pry', '~> 0.11.0', require: false
 
@@ -40,4 +37,5 @@ end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'rack-reverse-proxy', '~> 0.12.0'
 end

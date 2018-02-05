@@ -1,6 +1,10 @@
+const { resolve } = require('path')
+const Dotenv = require('dotenv')
+Dotenv.config()
+Dotenv.config({path: resolve(process.cwd(), '.env.development')})
+
 const environment = require('./environment')
 const WebpackHtmlPlugin = require('html-webpack-plugin')
-const { resolve } = require('path')
 const root = resolve(process.cwd())
 
 environment.plugins.append(

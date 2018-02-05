@@ -33,6 +33,10 @@
     "SIDEKIQ_CONCURRENCY": {
       "description": "The number of workers per Sidekiq process.",
       "value": "10"
+    },
+    "AUTH0_REDIRECT": {
+      "description": "The URL that Auth0 will redirect back to.",
+      "value": "https://change-to-your-app.example.com"
     }
   },
   "formation": {
@@ -43,6 +47,9 @@
     "sidekiq": {
       "quantity": 1,
       "size": "hobby"
+    },
+    "webpack": {
+      "quantity": 0
     }
   },
   "image": "heroku/ruby",

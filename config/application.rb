@@ -32,12 +32,6 @@ module Apollo
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
-    config.middleware.use ActionDispatch::Session::CacheStore
-
-    config.middleware.use OmniAuth::Builder do
-      provider :developer unless Rails.env.production?
-      provider :auth0, ENV['AUTH0_CLIENT_ID'], ENV['AUTH0_CLIENT_SECRET'], ENV['AUTH0_DOMAIN']
-    end
 
     # Use Pry for the console
     console do

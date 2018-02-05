@@ -1,3 +1,5 @@
+require 'rack/reverse_proxy'
+
 Rails.application.configure do
     config.webpacker.check_yarn_integrity = true  # Settings specified here will take precedence over those in config/application.rb.
 
@@ -16,24 +18,18 @@ Rails.application.configure do
   if Rails.root.join('tmp/caching-dev.txt').exist?
     config.action_controller.perform_caching = true
 
+    config.cache_store = :redis_store,
+                         {
+                           expires_in: 5.minutes,
+                           db: 1
+                         }
+
     config.public_file_server.headers = {
       'Cache-Control' => "public, max-age=#{2.days.seconds.to_i}"
     }
   else
     config.action_controller.perform_caching = false
   end
-
-  # Use Redis for caching.
-  config.cache_store = :redis_store,
-                       {
-                         expires_in: 5.minutes,
-                         namesapce: 'apollo-view-cache'
-                       }
-  config.session_store = :redis_store,
-                         {
-                           expires_in: 5.minutes,
-                           namesapce: 'apollo-session-cache'
-                         }
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
@@ -53,4 +49,9 @@ Rails.application.configure do
   # Use an evented file watcher to asynchronously detect changes in source code,
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
+
+  config.middleware.insert_before(Rack::Runtime, Rack::ReverseProxy) do
+    reverse_proxy_options preserve_host: true
+    reverse_proxy '/assets', ENV['WEBPACK_URL']
+  end
 end
