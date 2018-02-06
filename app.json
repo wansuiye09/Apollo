@@ -60,7 +60,14 @@
       "quantity": 0
     }
   },
-  "image": "heroku/ruby",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ],
   "addons": [
     {
       "plan": "heroku-postgresql:hobby-dev",
