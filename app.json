@@ -73,6 +73,9 @@
     },
     {
       "plan": "auth0:free"
+    },
+    {
+      "plan": "logdna:quaco"
     }
   ],
   "environments": {
