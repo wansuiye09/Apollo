@@ -1,7 +1,7 @@
 namespace :provision do
   desc 'Provision a Heroku based deployment.'
   task heroku: :environment do
-    puts 'Heorku ENV:'
-    pp ENV
+    Rails.logger.debug 'Heorku ENV:'
+    Rails.logger.debug ENV
   end
 end

@@ -11,7 +11,7 @@
   "repository": "https://github.com/KazTech/Apllo",
   "success_url": "/welcome",
   "scripts": {
-    "postdeploy": "rails db:schema:load db:seed"
+    "postdeploy": "rails provision:heroku"
   },
   "env": {
     "SECRET_KEY_BASE": {
@@ -57,7 +57,8 @@
       "size": "hobby"
     },
     "webpack": {
-      "quantity": 0
+      "quantity": 0,
+      "size": "hobby"
     }
   },
   "buildpacks": [

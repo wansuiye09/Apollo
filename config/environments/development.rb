@@ -1,7 +1,7 @@
 require 'rack/reverse_proxy'
 
 Rails.application.configure do
-    config.webpacker.check_yarn_integrity = true  # Settings specified here will take precedence over those in config/application.rb.
+  config.webpacker.check_yarn_integrity = true  # Settings specified here will take precedence over those in config/application.rb.
 
   # In the development environment your application's code is reloaded on
   # every request. This slows down response time but is perfect for development
@@ -54,4 +54,9 @@ Rails.application.configure do
     reverse_proxy_options preserve_host: true
     reverse_proxy '/assets', ENV['WEBPACK_URL']
   end
+
+  # Always log to STDOUT
+  logger           = ActiveSupport::Logger.new(STDOUT)
+  logger.formatter = config.log_formatter
+  config.logger    = ActiveSupport::TaggedLogging.new(logger)
 end
