@@ -19,6 +19,9 @@ module Auth0
 type alias LoggedInUser =
     { profile : UserProfile
     , token : Token
+    , idToken : Token
+    , apiToken : Token
+    , apiTokenType : String
     }
 
 
@@ -34,6 +37,8 @@ type alias Options =
 type alias UserProfile =
     { email : String
     , email_verified : Bool
+    , picture : String
+    , name : String
     }
 
 

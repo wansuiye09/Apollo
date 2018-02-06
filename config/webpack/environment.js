@@ -7,11 +7,11 @@ environment.loaders.append('elm', elm)
 environment.loaders.append('pug', pug)
 
 const sassEnvIndex = environment.loaders.findIndex(function(element) {
-  return element.key == 'sass';
+  return element.key == 'sass'
 })
 
 const sassLoaderIndex = environment.loaders[sassEnvIndex].value.use.findIndex(function(element) {
-  return element.loader == 'sass-loader';
+  return element.loader == 'sass-loader'
 })
 
 if (Array.isArray(environment.loaders[sassEnvIndex].value.use[sassLoaderIndex].options.includePaths)) {
@@ -30,4 +30,4 @@ environment.plugins.append(
   })
 )
 
-module.exports = environment;
+module.exports = environment

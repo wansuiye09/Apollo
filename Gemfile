@@ -10,8 +10,9 @@ end
 gem 'rails', '~> 5.1.4'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.18'
-# Use Passenger as the app server
-gem 'passenger', '~> 5.2.0'
+# Use Puma/Passenger as the app server
+gem 'passenger', '~> 5.2.0', group: :production
+gem 'puma', '~> 3.11.0', group: :development
 # Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
 gem 'webpacker', '~> 3.2.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder

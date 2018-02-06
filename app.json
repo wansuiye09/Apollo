@@ -37,6 +37,10 @@
     "AUTH0_REDIRECT": {
       "description": "The URL that Auth0 will redirect back to.",
       "value": "https://change-to-your-app.example.com"
+    },
+    "AUTH0_SPA_CLIENT_ID": {
+      "description": "The Auth0 client ID that the browser application will use.",
+      "value": "provisioned-automatically"
     }
   },
   "formation": {
@@ -64,10 +68,7 @@
       "plan": "heroku-redis:hobby-dev"
     },
     {
-      "plan": "auth0:free",
-      "options": {
-        "type": "rails"
-      }
+      "plan": "auth0:free"
     }
   ],
   "environments": {

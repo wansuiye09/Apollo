@@ -57,7 +57,12 @@ update msg model =
                         Err err ->
                             ( model.state, Just err )
             in
-                ( { model | state = newState, lastError = error }, Cmd.none )
+                ( { model
+                    | state = newState
+                    , lastError = error
+                  }
+                , Cmd.none
+                )
 
         ShowLogIn ->
             ( model, model.authorize Auth0.defaultOpts )

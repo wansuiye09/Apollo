@@ -7,8 +7,9 @@ const developmentOptions = {
   locals: {
     api_url: 'http://localhost:3000/',
     auth0_domain: process.env.AUTH0_DOMAIN,
-    auth0_client_id: process.env.AUTH0_CLIENT_ID,
+    auth0_client_id: process.env.AUTH0_SPA_CLIENT_ID,
     auth0_redirect: 'http://localhost:3000',
+    auth0_audience: 'main',
   }
 }
 
@@ -17,8 +18,9 @@ const productionOptions = {
   locals: {
     api_url: '/',
     auth0_domain: process.env.AUTH0_DOMAIN,
-    auth0_client_id: process.env.AUTH0_CLIENT_ID,
+    auth0_client_id: process.env.AUTH0_SPA_CLIENT_ID,
     auth0_redirect: process.env.AUTH0_REDIRECT,
+    auth0_audience: process.env.AUTH0_AUDIENCE,
   }
 }
 

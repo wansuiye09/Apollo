@@ -1,75 +1,101 @@
-'use strict';
+'use strict'
 
 class Ports {
   constructor(ports) {
-    ports.initPort.subscribe(this.initPort);
-    ports.updateTextFields.subscribe(this.updateTextFields);
-    ports.openModal.subscribe(this.openModal);
-    ports.closeModal.subscribe(this.closeModal);
-    ports.auth0Authorize.subscribe(this.auth0Authorize);
-    ports.auth0Logout.subscribe(this.auth0Logout);
+    ports.initPort.subscribe(this.initPort)
+    ports.updateTextFields.subscribe(this.updateTextFields)
+    ports.openModal.subscribe(this.openModal)
+    ports.closeModal.subscribe(this.closeModal)
+    ports.auth0Authorize.subscribe(this.auth0Authorize)
+    ports.auth0Logout.subscribe(this.auth0Logout)
   }
 
   // Initialization port, only called once when the Elm App initializes.
   initPort() {
-    $('.modal').modal({dismissible: false});
-    window.MainPorts.updateTextFields();
-    window.MainPorts.initializeAuth0();
+    $('.modal').modal({dismissible: false})
+    window.MainPorts.updateTextFields()
+    window.MainPorts.initializeAuth0()
   }
 
   // Used when dynamically updating Materialize text fields.
   updateTextFields(input) {
-    window.Materialize.updateTextFields();
+    window.Materialize.updateTextFields()
   }
 
   openModal(input) {
-    $('#' + input).modal('open');
+    $('#' + input).modal('open')
   }
 
   closeModal(input) {
-    $('#' + input).modal('close');
+    $('#' + input).modal('close')
   }
 
   auth0Authorize(input) {
-    window.WebAuth.authorize();
+    window.WebAuth.authorize()
   }
 
   auth0Logout(input) {
-    localStorage.removeItem(window.MainConfig.profileKey);
-    localStorage.removeItem(window.MainConfig.tokenKey);
-    localStorage.removeItem(window.MainConfig.idTokenKey);
+    localStorage.removeItem(window.MainConfig.auth0ProfileKey)
+    localStorage.removeItem(window.MainConfig.auth0TokenKey)
+    localStorage.removeItem(window.MainConfig.auth0IdTokenKey)
+    localStorage.removeItem(window.MainConfig.apiTokenKey)
+    localStorage.removeItem(window.MainConfig.apiTokenTypeKey)
   }
 
   initializeAuth0(input) {
-    window.WebAuth.parseHash({ hash: window.location.hash }, function(err, authResult) {
+    window.WebAuth.parseHash({ hash: window.location.hash }, function(err, auth0Result) {
+      window.location.hash = ''
       if (err) {
-        return console.error(err);
+        return console.error(err)
       }
-      if (authResult) {
-        window.WebAuth.client.userInfo(authResult.accessToken, function(err, profile) {
-          var result = { err: null, ok: null };
-          var token = authResult.accessToken;
-          var idToken = authResult.idToken;
-
+      if (auth0Result) {
+        var authResult = { err: null, ok: null }
+        window.WebAuth.client.userInfo(auth0Result.accessToken, function(err, profile) {
           if (err) {
-            result.err = err.details;
+            authResult.err = err.details
             // Ensure that optional fields are on the object
-            result.err.name = result.err.name ? result.err.name : null;
-            result.err.code = result.err.code ? result.err.code : null;
-            result.err.statusCode = result.err.statusCode ? result.err.statusCode : null;
+            authResult.err.name = authResult.err.name ? authResult.err.name : null
+            authResult.err.code = authResult.err.code ? authResult.err.code : null
+            authResult.err.statusCode = authResult.err.statusCode ? authResult.err.statusCode : null
           }
-          if (authResult) {
-            result.ok = { profile: profile, token: token, idToken: idToken };
-            localStorage.setItem(window.MainConfig.profileKey, JSON.stringify(profile));
-            localStorage.setItem(window.MainConfig.tokenKey, token);
-            localStorage.setItem(window.MainConfig.idTokenKey, idToken);
+          if (auth0Result && profile) {
+            var auth0Token = auth0Result.accessToken
+            var auth0IdToken = auth0Result.idToken
+
+            localStorage.setItem(window.MainConfig.auth0ProfileKey, JSON.stringify(profile))
+            localStorage.setItem(window.MainConfig.auth0TokenKey, auth0Token)
+            localStorage.setItem(window.MainConfig.auth0IdTokenKey, auth0IdToken)
+
+            authResult.ok = {
+              profile: profile,
+              token: auth0Token,
+              idToken: auth0IdToken,
+            }
+
+            window.WebAuth.checkSession(window.MainConfig.auth0Config({scope: ''}),
+              function (err, organizeResult) {
+                if (err) {
+                  // err if automatic parseHash fails
+                  return console.error(err)
+                }
+                var token     = organizeResult.accessToken
+                var tokenType = organizeResult.tokenType
+
+                if (token && tokenType) {
+                  localStorage.setItem(window.MainConfig.apiTokenKey, organizeResult.idToken)
+                  localStorage.setItem(window.MainConfig.apiTokenTypeKey, organizeResult.tokenType)
+                  authResult.ok.apiToken = token
+                  authResult.ok.apiTokenType = tokenType
+                }
+
+                window.Main.ports.auth0AuthResult.send(authResult)
+              }
+            )
           }
-          window.Main.ports.auth0AuthResult.send(result);
-        });
-        window.location.hash = '';
+        })
       }
-    });
+    })
   }
 }
 
-module.exports = Ports;
+module.exports = Ports

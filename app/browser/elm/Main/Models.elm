@@ -18,15 +18,13 @@ type Msg
 
 initModel : Flags -> Model
 initModel flags =
-    { quote = ""
-    , apiUrl = flags.apiUrl
+    { apiUrl = flags.apiUrl
     , authModel = Authentication.init auth0Authorize auth0Logout flags.auth0User
     }
 
 
 type alias Model =
     { apiUrl : String
-    , quote : String
     , authModel : Authentication.Model
     }
 
