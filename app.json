@@ -11,7 +11,7 @@
   "repository": "https://github.com/KazTech/Apllo",
   "success_url": "/welcome",
   "scripts": {
-    "postdeploy": "rails db:schema:load db:seed"
+    "postdeploy": "rails db:schema:load db:seed provision:heroku"
   },
   "env": {
     "SECRET_KEY_BASE": {
@@ -41,7 +41,11 @@
     "AUTH0_SPA_CLIENT_ID": {
       "description": "The Auth0 client ID that the browser application will use.",
       "value": "provisioned-automatically"
-    }
+    },
+    "AUTH0_AUDIENCE": {
+      "description": "The audience that represents the API in Auth0.",
+      "value": "main"
+    },
   },
   "formation": {
     "web": {
@@ -54,7 +58,7 @@
     },
     "webpack": {
       "quantity": 0
-    }
+    },
   },
   "image": "heroku/ruby",
   "addons": [
@@ -69,13 +73,16 @@
     },
     {
       "plan": "auth0:free"
-    }
+    },
+    {
+      "plan": "logdna:quaco"
+    },
   ],
   "environments": {
     "test": {
       "scripts": {
         "test": "rails test"
-      }
-    }
-  }
+      },
+    },
+  },
 }
