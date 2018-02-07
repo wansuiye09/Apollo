@@ -16,11 +16,6 @@
 .byebug_history
 /public/*
 !/public/.keep
-/elm-stuff
-/node_modules
-yarn-debug.log*
-yarn-error.log*
-.yarn-integrity
 
 # Ignore environment secrets, but keep common .env file.
 /.env.*
