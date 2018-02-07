@@ -59,6 +59,9 @@
     },
     {
       "url": "heroku/ruby"
+    },
+    {
+      "url": "https://github.com/moravcik/heroku-buildpack-post-build-clean#05d0ef183eaa8ef1d0af6c0fb5542311a81fbdfa"
     }
   ],
   "addons": [
