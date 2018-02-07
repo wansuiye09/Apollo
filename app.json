@@ -7,12 +7,8 @@
     "dataset construction",
     "machine learning"
   ],
-  "website": "https://github.com/KazTech/Apollo",
-  "repository": "https://github.com/KazTech/Apllo",
-  "success_url": "/welcome",
-  "scripts": {
-    "postdeploy": "rails provision:heroku"
-  },
+  "website": "https://github.com/KazW/Apollo",
+  "repository": "https://github.com/KazW/Apllo",
   "env": {
     "SECRET_KEY_BASE": {
       "description": "A secret key for verifying the integrity of signed cookies.",
@@ -85,12 +81,5 @@
     {
       "plan": "logdna:quaco"
     }
-  ],
-  "environments": {
-    "test": {
-      "scripts": {
-        "test": "rails test"
-      }
-    }
-  }
+  ]
 }
