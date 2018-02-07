@@ -7,12 +7,8 @@
     "dataset construction",
     "machine learning"
   ],
-  "website": "https://github.com/KazTech/Apollo",
-  "repository": "https://github.com/KazTech/Apllo",
-  "success_url": "/welcome",
-  "scripts": {
-    "postdeploy": "rails db:schema:load db:seed"
-  },
+  "website": "https://github.com/KazW/Apollo",
+  "repository": "https://github.com/KazW/Apllo",
   "env": {
     "SECRET_KEY_BASE": {
       "description": "A secret key for verifying the integrity of signed cookies.",
@@ -41,6 +37,10 @@
     "AUTH0_SPA_CLIENT_ID": {
       "description": "The Auth0 client ID that the browser application will use.",
       "value": "provisioned-automatically"
+    },
+    "AUTH0_AUDIENCE": {
+      "description": "The audience that represents the API in Auth0.",
+      "value": "main"
     }
   },
   "formation": {
@@ -53,15 +53,23 @@
       "size": "hobby"
     },
     "webpack": {
-      "quantity": 0
+      "quantity": 0,
+      "size": "hobby"
     }
   },
-  "image": "heroku/ruby",
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/ruby"
+    }
+  ],
   "addons": [
     {
       "plan": "heroku-postgresql:hobby-dev",
       "options": {
-        "version": "10.1"
+        "version": "10"
       }
     },
     {
@@ -69,13 +77,9 @@
     },
     {
       "plan": "auth0:free"
+    },
+    {
+      "plan": "logdna:quaco"
     }
-  ],
-  "environments": {
-    "test": {
-      "scripts": {
-        "test": "rails test"
-      }
-    }
-  }
+  ]
 }
