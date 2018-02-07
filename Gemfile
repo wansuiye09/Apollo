@@ -9,18 +9,13 @@ end
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.1.4'
 # Use postgresql as the database for Active Record
-gem 'pg', '~> 0.18'
+gem 'pg', '~> 1.0.0'
 # Use Puma/Passenger as the app server
 gem 'passenger', '~> 5.2.0', group: :production
 gem 'puma', '~> 3.11.0', group: :development
-# Transpile app-like JavaScript. Read more: https://github.com/rails/webpacker
-gem 'webpacker', '~> 3.2.0'
-# Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
-# gem 'jbuilder', '~> 2.5'
 # Use Redis for caching
 gem 'redis', '~> 3.0'
 gem 'redis-rails', '~> 5.0'
-
 # Use Sidekiq fo background jobs
 gem 'sidekiq', '~> 5.1'
 

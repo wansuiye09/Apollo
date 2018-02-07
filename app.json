@@ -51,10 +51,6 @@
     "sidekiq": {
       "quantity": 1,
       "size": "hobby"
-    },
-    "webpack": {
-      "quantity": 0,
-      "size": "hobby"
     }
   },
   "buildpacks": [
