@@ -1,2 +1,2 @@
-web: bin/passenger start -p $PORT --max-pool-size $PASSENGER_POOL
+web: bin/start-nginx rails s
 sidekiq: bin/sidekiq -C config/sidekiq.yml

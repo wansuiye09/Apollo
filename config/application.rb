@@ -33,11 +33,21 @@ module Apollo
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # UUID Primary Keys
+    config.generators do |gen|
+      gen.orm :active_record, primary_key_type: :uuid
+    end
+
     # Use Pry for the console
     console do
       require 'pry'
       config.console = Pry
       TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
+
+      # Development helpers in the console
+      unless Rails.env.production?
+        TOPLEVEL_BINDING.eval('self').extend FactoryBot::Syntax::Methods
+      end
     end
 
     # Use Sidekiq for ActiveJob
