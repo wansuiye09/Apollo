@@ -3,7 +3,11 @@ module API
     class SchemaVersionResource < BaseResource
       model_name 'API::V1::SchemaVersion'
       immutable
-      has_one :current_schema
+      caching
+
+      has_one  :primary_schema
+      has_one  :current_version
+      has_many :versions
 
       attributes :version_number,
                  :schema_ref,
