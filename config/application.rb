@@ -33,6 +33,9 @@ module Apollo
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Locales
+    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '{**/**/**/}', '*.{rb,yml}')]
+
     # UUID Primary Keys
     config.generators do |gen|
       gen.orm :active_record, primary_key_type: :uuid

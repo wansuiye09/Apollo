@@ -10,10 +10,31 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180210183910) do
+ActiveRecord::Schema.define(version: 20180211013523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
 
+  create_table "json_schema_versions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "json_schema_id"
+    t.integer "version_number", null: false
+    t.string "schema_ref", null: false
+    t.json "schema", default: {}, null: false
+    t.json "example", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["json_schema_id", "version_number"], name: "index_json_schema_versions_on_json_schema_id_and_version_number", unique: true
+    t.index ["json_schema_id"], name: "index_json_schema_versions_on_json_schema_id"
+  end
+
+  create_table "json_schemas", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "schema_ref", null: false
+    t.json "schema", default: {}, null: false
+    t.json "example", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_foreign_key "json_schema_versions", "json_schemas", on_delete: :cascade
 end

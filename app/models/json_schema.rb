@@ -1,0 +1,2 @@
+class JSONSchema < ApplicationRecord
+end

@@ -21,6 +21,14 @@ gem 'sidekiq', '~> 5.1'
 gem 'pry', '~> 0.11.0', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
+
+# JSON
+gem 'multi_json', '~> 1.0'
+gem 'oj', '~> 3.0'
+gem 'json-schema', '~> 2.8'
+gem 'jsonapi-resources', '~> 0.9.0'
+
+# Use Ember on the frontend
 gem 'ember-cli-rails', '~> 0.10.0'
 
 group :development, :test do
