@@ -3,4 +3,4 @@ en:
     errors:
       messages:
         invalid_schema: Invalid JSON Schema.
-        schema_mismatch: Doesn't match schema.
+        invalid_example: Example doesn't match schema.
