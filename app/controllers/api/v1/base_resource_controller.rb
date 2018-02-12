@@ -1,6 +1,7 @@
 module API
   module V1
-    class BaseResourceController < JSONAPI::ResourceController
+    class BaseResourceController < ApplicationController
+      include JSONAPI::ActsAsResourceController
     end
   end
 end
