@@ -49,14 +49,8 @@ Rails.application.configure do
                        {
                          url: ENV['REDIS_URL'],
                          expires_in: 90.minutes,
-                         namesapce: 'view-cache'
+                         db: 0
                        }
-  config.session_store = :redis_store,
-                         {
-                           url: ENV['REDIS_URL'],
-                           expires_in: 90.minutes,
-                           namesapce: 'session-cache'
-                         }
 
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque

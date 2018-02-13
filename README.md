@@ -1,24 +1,31 @@
 # README
+Apollo is a web app and (http) API for annotating the features of assets (images,
+videos, files, etc.) to create labeled datasets used in supervised machine learning.
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+### WEB UI LICENSE
+Copyright © 2018 Kaz Walker and Apollo contributors
 
-Things you may want to cover:
+This program is free software: you can redistribute it and/or modify
+it under the terms of the MIT License.
 
-* Ruby version
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+MIT for more details.
 
-* System dependencies
+For the full license see [frontend/LICENSE.md](frontend/LICENSE.md).
 
-* Configuration
+### API LICENSE
+Copyright © 2018 Kaz Walker and Apollo contributors
 
-* Database creation
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as
+published by the Free Software Foundation, either version 3 of the
+License, or (at your option) any later version.
 
-* Database initialization
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU Affero General Public License for more details.
 
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+For the full license see [LICENSE.md](LICENSE.md).

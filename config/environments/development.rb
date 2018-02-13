@@ -17,7 +17,7 @@ Rails.application.configure do
     config.cache_store = :redis_store,
                          {
                            expires_in: 5.minutes,
-                           db: 1
+                           db: 0
                          }
 
     config.public_file_server.headers = {
