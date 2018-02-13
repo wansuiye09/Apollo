@@ -5,9 +5,11 @@ module API
       immutable
       caching
 
-      has_one  :primary_schema
-      has_one  :current_version
+      has_one :primary_schema
       has_many :versions
+      relationship :current_version,
+                   to: :one,
+                   foreign_key_on: :related
 
       attributes :version_number,
                  :schema_ref,

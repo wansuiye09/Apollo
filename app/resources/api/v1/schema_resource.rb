@@ -3,7 +3,9 @@ module API
     class SchemaResource < BaseResource
       model_name 'API::V1::Schema'
       has_many :versions
-      has_one  :current_version
+      relationship :current_version,
+                   to: :one,
+                   foreign_key_on: :related
 
       attributes :schema_ref,
                  :schema,
