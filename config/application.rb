@@ -33,11 +33,36 @@ module Apollo
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Cleanup the models directory (granular model concerns)
+    config.autoload_paths += Dir[
+      Rails.root.join('app','models',
+        '{tables,relationships,callbacks,utilities}'
+      )
+    ]
+
+    # Locales
+    config.i18n.load_path += Dir[
+      Rails.root.join('config', 'locales',
+        '{**/**/**/}',
+        '*.{rb,yml}'
+      )
+    ]
+
+    # UUID Primary Keys
+    config.generators do |gen|
+      gen.orm :active_record, primary_key_type: :uuid
+    end
+
     # Use Pry for the console
     console do
       require 'pry'
       config.console = Pry
       TOPLEVEL_BINDING.eval('self').extend Rails::ConsoleMethods
+
+      # Development helpers in the console
+      unless Rails.env.production?
+        TOPLEVEL_BINDING.eval('self').extend FactoryBot::Syntax::Methods
+      end
     end
 
     # Use Sidekiq for ActiveJob

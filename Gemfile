@@ -11,8 +11,7 @@ gem 'rails', '~> 5.1.4'
 # Use postgresql as the database for Active Record
 gem 'pg', '~> 0.0'
 # Use Puma/Passenger as the app server
-gem 'passenger', '~> 5.2.0', group: :production
-gem 'puma', '~> 3.11.0', group: :development
+gem 'puma', '~> 3.0'
 # Use Redis for caching
 gem 'redis', '~> 3.0'
 gem 'redis-rails', '~> 5.0'
@@ -22,12 +21,21 @@ gem 'sidekiq', '~> 5.1'
 gem 'pry', '~> 0.11.0', require: false
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 # gem 'rack-cors'
+
+# JSON
+gem 'multi_json', '~> 1.0'
+gem 'oj', '~> 3.0'
+gem 'json-schema', '~> 2.8'
+gem 'jsonapi-resources', '~> 0.9.0'
+
+# Use Ember on the frontend
 gem 'ember-cli-rails', '~> 0.10.0'
 
 group :development, :test do
   # Call 'binding.pry' anywhere in the code to stop execution and get a debugger console
   gem 'pry-byebug', '~> 3.5.0'
   gem 'dotenv-rails', '~> 2.2.0'
+  gem 'factory_bot_rails', '~> 4.8.0'
 end
 
 group :development do

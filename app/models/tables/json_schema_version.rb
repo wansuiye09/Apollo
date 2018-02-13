@@ -1,0 +1,2 @@
+class JSONSchemaVersion < ApplicationRecord
+end
