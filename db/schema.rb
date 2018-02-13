@@ -10,11 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180211013523) do
+ActiveRecord::Schema.define(version: 20180213064820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "json_schema_version_references", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "referenced_version_id"
+    t.uuid "referencing_version_id"
+    t.index ["referenced_version_id"], name: "index_json_schema_version_references_on_referenced_version_id"
+    t.index ["referencing_version_id"], name: "index_json_schema_version_references_on_referencing_version_id"
+  end
 
   create_table "json_schema_versions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.uuid "json_schema_id"
@@ -36,5 +43,7 @@ ActiveRecord::Schema.define(version: 20180211013523) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "json_schema_version_references", "json_schema_versions", column: "referenced_version_id"
+  add_foreign_key "json_schema_version_references", "json_schema_versions", column: "referencing_version_id"
   add_foreign_key "json_schema_versions", "json_schemas", on_delete: :cascade
 end

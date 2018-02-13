@@ -24,6 +24,7 @@ module API
         validate_schema_ref
         validate_schema
         validate_example_with_schema
+        pass_captured_records
       end
 
       private
@@ -60,6 +61,11 @@ module API
           clear_cache: true,
           schema_reader: @schema_reader
         }
+      end
+
+      def pass_captured_records
+        return unless record.respond_to?(:captured_records=)
+        record.captured_records = @schema_reader.captured_records
       end
     end
   end

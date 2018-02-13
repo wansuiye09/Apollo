@@ -25,22 +25,19 @@ class SchemaURIReader < JSON::Schema::Reader
   private
 
   def allowed_remote_schemes
-    ['http']
+    @allowed_remote_schemes ||= ['http']
   end
 
   def allowed_remote_domains
-    ['json-schema.org']
+    @allowed_remote_domains ||= ['json-schema.org']
   end
 
   def custom_schemes
-    [
-      'schema',
-      'schema-version'
-    ]
+    @custom_schemes ||= model_map.keys
   end
 
   def model_map
-    {
+    @model_map ||= {
       'schema'         => JSONSchema,
       'schema-version' => JSONSchemaVersion
     }
@@ -72,7 +69,7 @@ class SchemaURIReader < JSON::Schema::Reader
   def capture_record(group, record)
     @captured_records        ||= {}
     @captured_records[group] ||= []
-    @captured_records[group] << record.id
+    @captured_records[group] << record
     @captured_records[group].uniq!
   end
 end

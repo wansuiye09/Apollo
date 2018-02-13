@@ -7,6 +7,8 @@ module API
 
       has_one :primary_schema
       has_many :versions
+      has_many :referenced_versions
+      has_many :referencing_versions
       relationship :current_version,
                    to: :one,
                    foreign_key_on: :related

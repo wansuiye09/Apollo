@@ -3,8 +3,8 @@ module API
     class SchemaURIReader < ::SchemaURIReader
       private
       def model_map
-        {
-          'schema' => Schema,
+        @model_map ||= {
+          'schema'         => Schema,
           'schema-version' => SchemaVersion
         }
       end
