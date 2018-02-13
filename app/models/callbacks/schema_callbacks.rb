@@ -3,6 +3,7 @@ module SchemaCallbacks
 
   included do
     after_commit :save_version
+    after_commit :touch_versions, on: :update
   end
 
   private
@@ -16,5 +17,9 @@ module SchemaCallbacks
         version_number: versions.count + 1
       )
     end
+  end
+
+  def touch_versions
+    versions.each(&:touch)
   end
 end

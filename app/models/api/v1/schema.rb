@@ -2,6 +2,7 @@ module API
   module V1
     class Schema < ::JSONSchema
       include SchemaRelationships
+      include SchemaCallbacks
 
       SCHEMAS = JSON::Validator.
                 validators.
