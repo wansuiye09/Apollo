@@ -33,8 +33,21 @@ module Apollo
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = true
 
+    # Cleanup the models directory (granular model concerns)
+    config.autoload_paths += Dir[
+      Rails.root.join('app','models',
+        '{tables,relationships,callbacks,utilities}',
+        '{**/}'
+      )
+    ]
+
     # Locales
-    config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '{**/**/**/}', '*.{rb,yml}')]
+    config.i18n.load_path += Dir[
+      Rails.root.join('config', 'locales',
+        '{**/**/**/}',
+        '*.{rb,yml}'
+      )
+    ]
 
     # UUID Primary Keys
     config.generators do |gen|
