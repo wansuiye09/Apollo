@@ -1,66 +1,76 @@
 class SchemaURIReader < JSON::Schema::Reader
-  attr_reader :captured_records
+  attr_reader :uri,
+              :schema,
+              :captured_records
+
+  delegate :host,
+           :scheme,
+           to: :uri
 
   def read(location)
-    @uri = JSON::Util::URI.parse(location)
-    @captured_records ||= {}
+    @uri    = JSON::Util::URI.parse(location)
+    @schema = case scheme
+              when 'file' then read_schema_from_file
+              when *custom_schemes then custom_schema
+              when *allowed_remote_schemes
+                super if allowed_remote_domains.include?(host)
+              else
+                default_raise
+              end
 
-    case @uri.scheme
-    when 'schema', 'schema-version'
-      set_schema
-    when 'file'
-      read_file_to_schema
-    when 'http', 'https'
-      if allowed_domains.include?(@uri.host)
-        return super
-      else
-        default_raise
-      end
-    else
-      default_raise
-    end
-
-    JSON::Schema.new(@schema, @uri)
+    default_raise unless schema.present?
+    JSON::Schema.new(schema, uri)
   end
 
   private
 
-  def allowed_domains
+  def allowed_remote_schemes
+    ['http']
+  end
+
+  def allowed_remote_domains
     ['json-schema.org']
   end
 
-  def read_file_to_schema
-    file = Pathname.new(@uri.path).expand_path
-
-    if file.to_s.starts_with?("#{ENV['GEM_HOME']}/gems/json-schema")
-      @uri    = JSON::Util::URI.file_uri(@uri)
-      body    = read_file(file)
-      @schema = JSON::Validator.parse(body)
-    else
-      default_raise
-    end
-  end
-
-  def default_raise
-    raise JSON::Schema::ReadFailed.new(@uri.to_s, :uri)
-  end
-
-  def set_schema
-    record     = model_map[@uri.scheme].find(@uri.host)
-    @schema    = record.schema
-    capture_record(@uri.scheme.underscore, record)
-  rescue ActiveRecord::RecordNotFound
-    default_raise
+  def custom_schemes
+    [
+      'schema',
+      'schema-version'
+    ]
   end
 
   def model_map
     {
-      'schema' => JSONSchema,
+      'schema'         => JSONSchema,
       'schema-version' => JSONSchemaVersion
     }
   end
 
+  def default_raise
+    raise JSON::Schema::ReadFailed.new(uri.to_s, :uri)
+  end
+
+  def read_schema_from_file
+    file = Pathname.new(@uri.path).expand_path
+
+    if file.to_s.starts_with?("#{ENV['GEM_HOME']}/gems/json-schema")
+      @uri = JSON::Util::URI.file_uri(uri)
+      return JSON::Validator.parse(read_file(file))
+    end
+
+    default_raise
+  end
+
+  def custom_schema
+    record = model_map[scheme].find(host)
+    capture_record(scheme.underscore, record)
+    record.schema
+  rescue ActiveRecord::RecordNotFound
+    default_raise
+  end
+
   def capture_record(group, record)
+    @captured_records        ||= {}
     @captured_records[group] ||= []
     @captured_records[group] << record.id
     @captured_records[group].uniq!
