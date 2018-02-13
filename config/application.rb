@@ -36,8 +36,7 @@ module Apollo
     # Cleanup the models directory (granular model concerns)
     config.autoload_paths += Dir[
       Rails.root.join('app','models',
-        '{tables,relationships,callbacks,utilities}',
-        '{**/}'
+        '{tables,relationships,callbacks,utilities}'
       )
     ]
 

@@ -1,6 +1,6 @@
 module API
   module V1
-    class BaseResource < JSONAPI::Resource
+    class BaseResource < ApplicationResource
       abstract
     end
   end
