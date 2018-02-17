@@ -1,13 +1,9 @@
 module API
   module V1
     class SchemaValidator < ActiveModel::Validator
-      SCHEMAS = JSON::Validator.
-                validators.
-                values.
-                map(&:names).
-                flatten.
-                uniq.
-                select{|ref| ref =~ /\Ahttp/ }.
+      SCHEMAS = JSON::Schema.
+                core_schemas.
+                keys.
                 deep_dup.
                 map(&:freeze).
                 freeze
@@ -33,33 +29,25 @@ module API
         errors.add(:schema_ref, :inclusion) unless SCHEMAS.include?(schema_ref)
       end
 
-      def validate_schema
+      def validate_and_example
         return if errors[:schema_ref].present?
         return errors.add(:schema, :invalid_schema) if schema['id'].present?
 
-        metaschema = JSON::Validator.validator_for_name(schema_ref).metaschema
-        unless JSON::Validator.validate(metaschema, schema, validation_options)
-          errors.add(:schema, :invalid_schema)
-        end
-      rescue JSON::Schema::ReadFailed, JSON::Schema::ReadRefused
+        JSON::Schema.validate!(
+          JSON::Schema.core_schemas[schema_ref],
+          schema,
+          validation_options
+        )
+      rescue JSON::Schema::InvalidSchema, JSON::Schema::ReadFailed, JSON::Schema::ReadRefused
         errors.add(:schema, :invalid_schema)
-      end
-
-      def validate_example_with_schema
-        return if errors[:schema].present?
-
-        unless JSON::Validator.validate(schema, example, validation_options)
-          errors.add(:example, :invalid_example)
-        end
-      rescue JSON::Schema::ReadFailed, JSON::Schema::ReadRefused
+      rescue JSON::Schema::ValidationFailed
         errors.add(:example, :invalid_example)
       end
 
       def validation_options
         @schema_reader ||= SchemaURIReader.new
         {
-          clear_cache: true,
-          schema_reader: @schema_reader
+          reader: @schema_reader
         }
       end
 

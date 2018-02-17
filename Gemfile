@@ -25,7 +25,6 @@ gem 'pry', '~> 0.11.0', require: false
 # JSON
 gem 'multi_json', '~> 1.0'
 gem 'oj', '~> 3.0'
-gem 'json-schema', '~> 2.8'
 gem 'jsonapi-resources', '~> 0.9.0'
 
 # Use Ember on the frontend
@@ -40,4 +39,5 @@ end
 
 group :development do
   gem 'listen', '>= 3.0.5', '< 3.2'
+  gem 'dry-json-schemas', path: '../dry-json-schemas'
 end

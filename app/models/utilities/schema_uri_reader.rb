@@ -8,9 +8,8 @@ class SchemaURIReader < JSON::Schema::Reader
            to: :uri
 
   def read(location)
-    @uri    = JSON::Util::URI.parse(location)
+    @uri    = URI.parse(location)
     @schema = case scheme
-              when 'file' then read_schema_from_file
               when *custom_schemes then custom_schema
               when *allowed_remote_schemes
                 super if allowed_remote_domains.include?(host)
@@ -19,7 +18,7 @@ class SchemaURIReader < JSON::Schema::Reader
               end
 
     default_raise unless schema.present?
-    JSON::Schema.new(schema, uri)
+    schema
   end
 
   private
@@ -44,18 +43,7 @@ class SchemaURIReader < JSON::Schema::Reader
   end
 
   def default_raise
-    raise JSON::Schema::ReadFailed.new(uri.to_s, :uri)
-  end
-
-  def read_schema_from_file
-    file = Pathname.new(@uri.path).expand_path
-
-    if file.to_s.starts_with?("#{ENV['GEM_HOME']}/gems/json-schema")
-      @uri = JSON::Util::URI.file_uri(uri)
-      return JSON::Validator.parse(read_file(file))
-    end
-
-    default_raise
+    raise JSON::Schema::ReadFailed.new(uri.to_s)
   end
 
   def custom_schema
