@@ -52,7 +52,7 @@
       "url": "https://github.com/heroku/heroku-buildpack-nginx#bfd1f656799c77a808886976e1724b3cd2c03735"
     },
     {
-      "url": "https://github.com/moravcik/heroku-buildpack-post-build-clean#05d0ef183eaa8ef1d0af6c0fb5542311a81fbdfa"
+      "url": "https://github.com/Lostmyname/heroku-buildpack-post-build-clean#05d0ef183eaa8ef1d0af6c0fb5542311a81fbdfa"
     }
   ],
   "addons": [
