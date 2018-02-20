@@ -36,7 +36,7 @@
     }
   },
   "formation": {
-    "heroku-web": {
+    "web": {
       "quantity": 1,
       "size": "hobby"
     }
