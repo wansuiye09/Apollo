@@ -1,1 +1,1 @@
-heroku-web: bin/heroku-run-web
+web: bin/heroku-run-web
