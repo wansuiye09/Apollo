@@ -22,9 +22,11 @@ function start-nginx {
   # Evaluate configs to get ENV.
   erb config/heroku-nginx.erb.conf > config/nginx.conf
 
-  # Create logs dir. NGINX insists on creating logs/error.log even
+  # Create logs dir. NGINX insists on creating logs/nginx/error.log even
   # though it will remain an empty file, with actual logging on stderr.
-  mkdir -p logs
+  #Initialize log directory.
+  mkdir -p logs/nginx
+  touch logs/nginx/access.log logs/nginx/error.log
 
   # Start NGINX.
   aux-start nginx SIGQUIT $NGINX_PORT bin/nginx -p . -c config/nginx.conf
