@@ -47,7 +47,8 @@ function start-backend {
     # Start child in the background. This is before the trap because
     # the backend needs to be able to receive when the dyno broadcasts
     # SIGTERM on shutdown.
-    "PORT=$port $@" &
+    export PORT=$port
+    "$@" &
 
     # Translate SIGHUP/SIGTERM to the appropriate signal to stop the child
     # (probably SIGTERM in this case). Since this doesn't exit, it won't
@@ -78,7 +79,8 @@ function aux-start {
     trap '' SIGTERM
 
     # Start child in the background.
-    "PORT=$port $@" &
+    export PORT=$port
+    "$@" &
 
     # Translate SIGHUP to the appropriate signal to stop the child
     # (anything except SIGTERM which is ignored). Since this doesn't
