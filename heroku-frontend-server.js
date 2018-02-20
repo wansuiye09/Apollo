@@ -2,7 +2,7 @@
 
 const FastBootAppServer = require('fastboot-app-server');
 let server = new FastBootAppServer({
-  distPath: 'steno_public'
+  distPath: 'public'
 });
 
 server.start();
