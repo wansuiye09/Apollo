@@ -5,7 +5,7 @@
     "npm": "5.6.0"
   },
   "scripts": {
-    "heroku-prebuild": "bin/heroku-build-frontend",
+    "heroku-postbuild": "bin/heroku-build-frontend",
     "heroku-server": "node heroku-frontend-server.js"
   },
   "cacheDirectories": [
