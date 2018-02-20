@@ -18,6 +18,10 @@
       "description": "The Elixir environment/mode to run the server in.",
       "value": "prod"
     },
+    "EMBER_ENV": {
+      "description": "The Meber environment/mode to build the frontend in.",
+      "value": "production"
+    },
     "NPM_CONFIG_PRODUCTION": {
       "description": "Ember builds don't work with NPM in production mode.",
       "value": "false"
