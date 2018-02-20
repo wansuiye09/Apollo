@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
-npm install ember-cli
+npm install -g ember-cli
+cd steno
+npm install
 ember build --environment=production
-mkdir -p ../public
-cp -r steno/dist/* ../public
+cd ..
+mkdir -p public
+cp -r steno/dist/* public

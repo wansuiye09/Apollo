@@ -18,6 +18,10 @@
       "description": "The Elixir environment/mode to run the server in.",
       "value": "prod"
     },
+    "NPM_CONFIG_PRODUCTION": {
+      "description": "Ember builds don't work in production mode.",
+      "value": "false"
+    },
     "AUTH0_REDIRECT": {
       "description": "The URL that Auth0 will redirect back to.",
       "value": "provisioned-automatically"
