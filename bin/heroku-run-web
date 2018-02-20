@@ -8,8 +8,8 @@ function main {
   mkfifo "$psmgr"
 
   set-ports
-  start-backend SIGTERM PORT=$BACKEND_PORT mix phx.server
-  aux-start frontend SIGTERM PORT=$FRONTEND_PORT npm run heroku-server
+  start-backend SIGTERM $BACKEND_PORT mix phx.server
+  aux-start frontend SIGTERM $FRONTEND_PORT npm run heroku-server
 
   wait_for_port backend $BACKEND_PORT
   wait_for_port frontend $FRONTEND_PORT
@@ -27,13 +27,19 @@ function start-nginx {
   mkdir -p logs
 
   # Start NGINX.
-  aux-start nginx SIGQUIT PORT=$NGINX_PORT bin/nginx -p . -c config/nginx.conf
+  aux-start nginx SIGQUIT $NGINX_PORT bin/nginx -p . -c config/nginx.conf
+  # Start log redirection.
+  (
+    # Redirect NGINX logs to stdout.
+    tail -qF -n 0 logs/nginx/*.log
+    echo 'logs' >$psmgr
+  ) &
   wait_for_port nginx $NGINX_PORT
 }
 
 function start-backend {
-  declare name=backend signal=$1
-  shift
+  declare name=backend signal=$1 port=$2
+  shift 2
 
   (
     at "$name-start"
@@ -41,7 +47,7 @@ function start-backend {
     # Start child in the background. This is before the trap because
     # the backend needs to be able to receive when the dyno broadcasts
     # SIGTERM on shutdown.
-    "$@" &
+    "PORT=$port $@" &
 
     # Translate SIGHUP/SIGTERM to the appropriate signal to stop the child
     # (probably SIGTERM in this case). Since this doesn't exit, it won't
@@ -58,12 +64,12 @@ function start-backend {
   ) &
 
   declare backend_pid=$!
-  at "$name-launched pid=$backend_pid"
+  at "$name-started pid=$backend_pid"
 }
 
 function aux-start {
-  declare name=$1 signal=$2
-  shift 2
+  declare name=$1 signal=$2 port=$3
+  shift 3
 
   (
     at "$name-start"
@@ -72,7 +78,7 @@ function aux-start {
     trap '' SIGTERM
 
     # Start child in the background.
-    "$@" &
+    "PORT=$port $@" &
 
     # Translate SIGHUP to the appropriate signal to stop the child
     # (anything except SIGTERM which is ignored). Since this doesn't
