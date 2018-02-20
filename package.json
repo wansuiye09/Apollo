@@ -5,7 +5,7 @@
     "npm": "5.6.0"
   },
   "scripts": {
-    "heroku-postbuild": "bin/heroku-build-frontend",
+    "install": "bin/heroku-build-frontend",
     "heroku-server": "node heroku-frontend-server.js"
   },
   "cacheDirectories": [
@@ -13,7 +13,6 @@
     "node_modules"
   ],
   "dependencies": {
-    "ember-cli": "^3.0.0",
     "fastboot-app-server": "^1.1.0"
   }
 }
