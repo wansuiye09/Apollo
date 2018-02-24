@@ -5,8 +5,6 @@ matrix:
       otp_release: '20.0'
 
     - language: node_js
-      before_script:
-        - cd steno
       node_js:
         - "6"
       sudo: false
