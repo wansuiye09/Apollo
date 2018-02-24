@@ -12,8 +12,12 @@ defmodule Apollo.Application do
   def start(_type, _args) do
     import Supervisor.Spec, warn: false
 
-    Supervisor.start_link([
-      supervisor(Apollo.Repo, []),
-    ], strategy: :one_for_one, name: Apollo.Supervisor)
+    Supervisor.start_link(
+      [
+        supervisor(Apollo.Repo, [])
+      ],
+      strategy: :one_for_one,
+      name: Apollo.Supervisor
+    )
   end
 end

@@ -15,17 +15,15 @@ config :apollo_web, ApolloWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "eNKNtgRPrmXhHrYtjLDdAHXajyRdNCrdujnosYJf5bjhd5P88IXwHBacpJVQphg6",
   render_errors: [view: ApolloWeb.ErrorView, accepts: ~w(json)],
-  pubsub: [name: ApolloWeb.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: ApolloWeb.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
   metadata: [:request_id]
 
-config :apollo_web, :generators,
-  context_app: :apollo
+config :apollo_web, :generators, context_app: :apollo
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"

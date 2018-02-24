@@ -25,13 +25,13 @@ defmodule ApolloWeb.ChannelCase do
     end
   end
 
-
   setup tags do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
     unless tags[:async] do
       Ecto.Adapters.SQL.Sandbox.mode(Apollo.Repo, {:shared, self()})
     end
+
     :ok
   end
-
 end

@@ -7,7 +7,7 @@ defmodule ApolloWeb.Application do
     # Define workers and child supervisors to be supervised
     children = [
       # Start the endpoint when the application starts
-      supervisor(ApolloWeb.Endpoint, []),
+      supervisor(ApolloWeb.Endpoint, [])
       # Start your own worker by calling: ApolloWeb.Worker.start_link(arg1, arg2, arg3)
       # worker(ApolloWeb.Worker, [arg1, arg2, arg3]),
     ]
