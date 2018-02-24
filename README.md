@@ -1,4 +1,6 @@
 # README
+[![Build Status](https://travis-ci.org/KazW/Apollo.svg?branch=master)](https://travis-ci.org/KazW/Apollo)
+
 Apollo is a web app and (http) API for annotating the features of assets (images,
 videos, files, etc.) to create labeled datasets used in supervised machine learning.
 
