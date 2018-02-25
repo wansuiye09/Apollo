@@ -2,7 +2,7 @@
   steps:
     - name: Apollo tests
       service: apollo-test
-      command: jet-lag mix test
+      command: mix test
 
     - name: Steno tests
       service: steno-test

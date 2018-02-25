@@ -4,9 +4,7 @@ use Mix.Config
 if System.get_env("CI") == "true" do
   config :apollo, Apollo.Repo,
     adapter: Ecto.Adapters.Postgres,
-    hostname: System.get_env("POSTGRES_PORT_5432_TCP_ADDR"),
-    username: "postgres",
-    database: "apollo_test",
+    url: System.get_env("DATABASE_URL"),
     pool: Ecto.Adapters.SQL.Sandbox
 else
   config :apollo, Apollo.Repo,
