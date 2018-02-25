@@ -1,8 +1,16 @@
 - type: parallel
   steps:
-    - name: Apollo tests
-      service: apollo-test
+    - name: Apollo Core tests
+      service: apollo-core-test
       command: mix test
+
+    - name: Apollo Web tests
+      service: apollo-web-test
+      command: mix test
+
+    - name: Apollo lint check
+      service: apollo-base-test
+      command: mix format --check-formatted --dry-run
 
     - name: Steno tests
       service: steno-test

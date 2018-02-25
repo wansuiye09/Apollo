@@ -1,15 +1,18 @@
-FROM node:9.5-slim
+FROM elixir:1.6.1-slim
 
-# Install Chrome so tests can run.
-RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
-RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+# Download and install Hex and Rebar.
+RUN yes | mix do local.rebar, local.hex
+
+# Install build deps.
 RUN apt-get update
-RUN apt-get install google-chrome-stable -y
+RUN apt-get install -y git-core postgresql-client
 
+# Add project bin to the PATH.
+ENV PATH /app/bin:$PATH
 WORKDIR /app
 
-# Add project bin to the PATH and create priv folder.
-ENV PATH /app/node_modules/.bin:$PATH
+# Set the Mix environment to test.
+ENV MIX_ENV test
 
 #    _________________________
 #    < This is important. >
@@ -24,10 +27,14 @@ ENV PATH /app/node_modules/.bin:$PATH
 # This is to maximize the use of the Docker cache. It should work well with any Docker based CI.
 ####################################################################################################
 
-# Install Node packages.
-COPY steno/package.json /app/package.json
-COPY steno/package-lock.json /app/package-lock.json
-RUN npm install
 
-# Add codebase, optimize later.
-COPY steno/ /app/
+COPY /mix.exs /app/mix.exs
+COPY /mix.lock /app/mix.lock
+COPY /apps/apollo/mix.exs /app/apps/apollo/mix.exs
+COPY /apps/apollo_web/mix.exs /app/apps/apollo_web/mix.exs
+RUN mix do deps.get, deps.compile
+
+# Precompile the for test environment, this should always be last.
+# This should prevent any compiling when running the test suite.
+COPY / /app/
+RUN mix compile
