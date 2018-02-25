@@ -1,0 +1,24 @@
+
+apollo_test:
+  cached: true
+  build:
+    image: apollo-test
+    dockerfile_path: Dockerfiles/apollo/Dockerfile.test
+  links:
+    - postgres
+  environment:
+    CI: true
+    MIX_ENV: test
+    JET_TIMEOUT: 120
+
+steno_test:
+  cached: true
+  build:
+    image: steno-test
+    dockerfile_path: Dockerfiles/steno/Dockerfile.test
+  environment:
+    CI: true
+    NODE_ENV: test
+
+postgres:
+   image: postgres:10.2

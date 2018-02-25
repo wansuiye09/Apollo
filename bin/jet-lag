@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+main() {
+  # 30 second default
+  default_timeout=30
+  echo "jet-lag timeout=${JET_TIMEOUT:-default_timeout}"
+
+  step waiting-for-services
+  start_time=timestamp
+  # Chain tests together by using &&
+  until ( lag-postgres )
+  do
+    current_time=timestamp
+    if ((current_time == start_time + ${JET_TIMEOUT:-default_timeout}))
+    then
+      step services-failure
+      exit 1
+    fi
+    sleep 0.1
+  done
+  step services-ready
+
+  step execute-command
+  exec "$@"
+}
+
+step() {
+  echo "jet-lag step=$*"
+}
+
+function lag-postgres {
+  pg_isready -h "${POSTGRES_PORT_5432_TCP_ADDR}" > /dev/null 2>&1
+}
+
+timestamp() {
+  date +"%T"
+}
+
+main "$@"
