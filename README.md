@@ -1,5 +1,6 @@
 # README
 [![Codeship Status for KazW/Apollo](https://app.codeship.com/projects/139e3510-fbf5-0135-69af-5a4a59131bef/status?branch=master)](https://app.codeship.com/projects/279002)
+[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)
 
 Apollo is a web app and (http) API for annotating the features of assets (images,
 videos, files, etc.) to create labeled datasets used in supervised machine learning.

@@ -45,6 +45,9 @@
       "size": "hobby"
     }
   },
+  "scripts": {
+    "postdeploy": "mix ecto.setup"
+  },
   "buildpacks": [
     {
       "url": "heroku/nodejs"
