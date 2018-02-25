@@ -1,3 +1,18 @@
 {
-  "cacheDirectories": ["frontend/node_modules","node_modules"]
+  "private": true,
+  "engines": {
+    "node": "9.5.0",
+    "npm": "5.7.1"
+  },
+  "scripts": {
+    "heroku-prebuild": "bin/heroku-build-frontend",
+    "heroku-server": "node heroku-frontend-server.js"
+  },
+  "cacheDirectories": [
+    "steno/node_modules",
+    "node_modules"
+  ],
+  "dependencies": {
+    "fastboot-app-server": "^1.1.0"
+  }
 }

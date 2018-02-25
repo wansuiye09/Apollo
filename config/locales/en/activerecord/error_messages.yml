@@ -1,6 +1,0 @@
-en:
-  activerecord:
-    errors:
-      messages:
-        invalid_schema: Invalid JSON Schema.
-        invalid_example: Example doesn't match schema.

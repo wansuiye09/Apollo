@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+function main {
+  declare psmgr=/tmp/app-muxer
+  declare -A pids signals
+  # Use named pipe to detect exit of any subprocess.
+  rm -f "$psmgr"
+  mkfifo "$psmgr"
+
+  set-ports
+  start-backend SIGTERM $BACKEND_PORT mix phx.server
+  aux-start frontend SIGTERM $FRONTEND_PORT npm run heroku-server
+
+  wait_for_port backend $BACKEND_PORT
+  wait_for_port frontend $FRONTEND_PORT
+  start-nginx
+
+  wait_then_cleanup
+}
+
+function start-nginx {
+  # Evaluate configs to get ENV.
+  erb config/heroku-nginx.erb.conf > config/nginx.conf
+
+  # Create logs dir. NGINX insists on creating logs/nginx/error.log even
+  # though it will remain an empty file, with actual logging on stderr.
+  #Initialize log directory.
+  mkdir -p logs/nginx
+  touch logs/nginx/access.log logs/nginx/error.log
+
+  # Start NGINX.
+  aux-start nginx SIGQUIT $NGINX_PORT bin/nginx -p . -c config/nginx.conf
+  # Start log redirection.
+  (
+    # Redirect NGINX logs to stdout.
+    tail -qF -n 0 logs/nginx/*.log
+    echo 'logs' >$psmgr
+  ) &
+  wait_for_port nginx $NGINX_PORT
+}
+
+function start-backend {
+  declare name=backend signal=$1 port=$2
+  shift 2
+
+  (
+    at "$name-start"
+
+    # Start child in the background. This is before the trap because
+    # the backend needs to be able to receive when the dyno broadcasts
+    # SIGTERM on shutdown.
+    export PORT=$port
+    "$@" &
+
+    # Translate SIGHUP/SIGTERM to the appropriate signal to stop the child
+    # (probably SIGTERM in this case). Since this doesn't exit, it won't
+    # cancel the wait.
+    trap "kill -$signal $!" SIGHUP SIGTERM
+
+    # Wait for the backend to finish, either by crash or by $signal
+    wait
+
+    # Notify FIFO if this finishes first
+    echo "$name" > "$psmgr"
+
+    at "$name-exit"
+  ) &
+
+  declare backend_pid=$!
+  at "$name-started pid=$backend_pid"
+}
+
+function aux-start {
+  declare name=$1 signal=$2 port=$3
+  shift 3
+
+  (
+    at "$name-start"
+
+    # Ignore SIGTERM. Wait for SIGHUP.
+    trap '' SIGTERM
+
+    # Start child in the background.
+    export PORT=$port
+    "$@" &
+
+    # Translate SIGHUP to the appropriate signal to stop the child
+    # (anything except SIGTERM which is ignored). Since this doesn't
+    # exit, it won't cancel the wait.
+    trap "kill -$signal $!" SIGHUP
+
+    # Wait for child to finish, either by crash or by $signal
+    wait
+
+    # Notify FIFO if this finishes first
+    echo "$name" > "$psmgr"
+
+    at "$name-exit"
+  ) &
+
+  pids[$name]=$!
+  signals[$name]=$signal
+  at "$name-started pid=$!"
+}
+
+function at {
+  echo "app-muxer at=$*"
+}
+
+function set-ports {
+  export NGINX_PORT=$PORT
+  unset PORT
+  export BACKEND_PORT=$(random_port)
+  export FRONTEND_PORT=$(random_port)
+
+  while [[(($NGINX_PORT == $BACKEND_PORT)) || (($NGINX_PORT == $FRONTEND_PORT)) || (($BACKEND_PORT == $FRONTEND_PORT))]]; do
+    BACKEND_PORT=$(random_port)
+    FRONTEND_PORT=$(random_port)
+    export BACKEND_PORT=$BACKEND_PORT
+    export FRONTEND_PORT=$FRONTEND_PORT
+  done
+}
+
+function wait_for_port {
+  while ! nc -z localhost $2; do
+    sleep 0.1
+  done
+  at "$1-online"
+}
+
+function random_port {
+  awk -v min=1024 -v max=65535 -v seed=$RANDOM 'BEGIN{srand(seed); print int(min+rand()*(max-min+1))}'
+}
+
+function wait_then_cleanup {
+  # Don't exit top script until all subprocesses are done.
+  trap '' SIGTERM
+
+  # This read will block the process waiting on a msg to be put into the
+  # fifo. If any of the processes defined above should exit, a msg will be
+  # put into the fifo causing the read operation to un-block. The process
+  # putting the msg into the fifo will use it's process name as a msg so that
+  # we can print the offending process to stdout.
+  declare exit_process
+  read exit_process < "$psmgr"
+  at "exit process=$exit_process"
+
+  # Remove the FIFO. This allows following writes to simply create a file,
+  # rather than blocking because there's nothing reading the other end.
+  rm -f "$psmgr"
+
+  # Clean up any running processes.
+  # SIGTERM application just in case something else crashed.
+  # If the dyno is shutting down, then SIGTERM has already been sent.
+  at "kill-backend pid=$backend_pid"
+  kill -SIGTERM $backend_pid
+
+  # Wait for the backend to finish.
+  at "wait-backend pid=$backend_pid"
+  wait $backend_pid
+
+  # Kill the auxiliary processes.
+  # Send each one SIGHUP which will be translated by the trap in aux-start.
+  declare name
+  for name in "${!pids[@]}"; do
+    at "kill-aux name=$name pid=${pids[$name]} signal=${signals[$name]}"
+    kill -SIGHUP "${pids[$name]}"
+  done
+}
+
+main

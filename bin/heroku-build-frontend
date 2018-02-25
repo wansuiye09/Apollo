@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+cd steno
+npm install
+npm run build
+cd ..
+mkdir -p public
+cp -r steno/dist/* public

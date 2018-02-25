@@ -1,0 +1,13 @@
+- type: parallel
+  steps:
+    - name: Apollo tests
+      service: apollo-test
+      command: mix test
+
+    - name: Steno tests
+      service: steno-test
+      command: npm test
+
+    - name: Steno lint check
+      service: steno-test
+      command: npm run lint:js
