@@ -1,25 +1,25 @@
 - type: parallel
   steps:
-    - name: Apollo Core tests
+    - name: Apollo Core Tests
       service: apollo-core-test
       command: mix test
 
-    - name: Apollo Web tests
+    - name: Apollo Web Tests
       service: apollo-web-test
       command: mix test
 
-    - name: Apollo test coverage
-      service: apollo-base-test
-      command: bin/ci-test-coverage
-
-    - name: Apollo lint check
+    - name: Apollo Linting
       service: apollo-base-test
       command: mix format --check-formatted --dry-run
 
-    - name: Steno tests
+    - name: Steno Tests
       service: steno-test
       command: npm test
 
-    - name: Steno lint check
+    - name: Steno Linting
       service: steno-test
       command: npm run lint:js
+
+    - name: Apollo Test Coverage
+      service: apollo-base-test
+      command: bin/apollo-test-coverage
