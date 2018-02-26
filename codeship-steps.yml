@@ -10,7 +10,6 @@
 
     - name: Apollo test coverage
       service: apollo-base-test
-      tag: master
       command: bin/ci-test-coverage
 
     - name: Apollo lint check
