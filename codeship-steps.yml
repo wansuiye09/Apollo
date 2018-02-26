@@ -10,6 +10,7 @@
 
     - name: Apollo test coverage
       service: apollo-base-test
+      tag: master
       command: mix coveralls.post --umbrella --token $COVERALLS_REPO_TOKEN --branch $CI_BRANCH --name $CI_NAME --commiter $CI_COMMITTER_NAME --sha $CI_COMMIT_ID --message $CI_COMMIT_MESSAGE
 
     - name: Apollo lint check

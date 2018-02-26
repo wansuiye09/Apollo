@@ -1,6 +1,6 @@
 # README
 [![Codeship Status for KazW/Apollo](https://app.codeship.com/projects/139e3510-fbf5-0135-69af-5a4a59131bef/status?branch=master)](https://app.codeship.com/projects/279002)
-[![Coverage Status](https://coveralls.io/repos/github/KazW/Apollo/badge.svg?branch=master)](https://coveralls.io/github/KazW/Apollo?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/KazW/Apollo/badge.svg)](https://coveralls.io/github/KazW/Apollo)
 [![Deps Status](https://beta.hexfaktor.org/badge/all/github/KazW/Apollo.svg)](https://beta.hexfaktor.org/github/KazW/Apollo)
 [![Deps Status](https://beta.hexfaktor.org/badge/prod/github/KazW/Apollo.svg)](https://beta.hexfaktor.org/github/KazW/Apollo)
 
