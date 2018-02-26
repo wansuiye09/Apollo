@@ -1,11 +1,13 @@
 defmodule Apollo.JSONSchema.Resolver do
   import Ecto.Query, only: [from: 2]
   alias ExJsonSchema.Schema.InvalidSchemaError
+  @remote_protocols ["http", "https"]
 
-  def http_resolve(url) when is_binary(url) do
-    case URI.parse(url).scheme do
-      "http", "https" -> HTTPoison.get!(url).body |> Poison.decode!()
-      _ -> default_raise(url)
+  def remote_resolve(url) when is_binary(url) do
+    if Enum.member?(@remote_protocols, URI.parse(url).scheme) do
+      HTTPoison.get!(url).body |> Poison.decode!()
+    else
+      default_raise(url)
     end
   end
 
