@@ -2,6 +2,7 @@ apollo-base-test:
   cached: true
   build:
     dockerfile_path: Dockerfiles/base_test.Dockerfile
+  encrypted_env_file: ci-env.encrypted
   depends_on:
     - postgres
   environment:
