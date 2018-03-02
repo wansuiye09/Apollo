@@ -30,7 +30,7 @@ defmodule Apollo.JSONSchema.Create do
     if changeset.valid? do
       case Validator.process(changeset) do
         {:ok, changeset, schema} -> save(changeset, schema)
-        {:error, changeset} -> changeset
+        {:error, changeset, _schema} -> changeset
       end
     else
       changeset

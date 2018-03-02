@@ -20,5 +20,6 @@ defmodule Apollo.JSONSchema.Helper do
   defp cleaned_schema(changeset) do
     get_field(changeset, :schema)
     |> Map.drop(["$schema", :"$schema"])
+    |> Map.drop(["$id", :"$id"])
   end
 end

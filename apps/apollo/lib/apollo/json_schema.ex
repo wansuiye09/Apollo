@@ -14,14 +14,8 @@ defmodule Apollo.JSONSchema do
     updated_at: nil
   )
 
-  def new(schema, example), do: create(schema, example)
-  def new(%JSONSchema{schema: schema, example: example}), do: create(schema, example)
-  def new(%{"schema" => schema, "example" => example}), do: create(schema, example)
-  def create(%JSONSchema{schema: schema, example: example}), do: create(schema, example)
-  def create(%{"schema" => schema, "example" => example}), do: create(schema, example)
-
   def create(schema, example) when is_map(schema) and is_map(example) do
-    struct(__MODULE__, Map.from_struct(Create.process(schema, example)))
+    struct(__MODULE__, Create.process(schema, example) |> Map.from_struct())
   end
 
   def get_schema(schema_id) when is_binary(schema_id) do
@@ -32,9 +26,6 @@ defmodule Apollo.JSONSchema do
 
   def get_current_version_for(schema_id) when is_binary(schema_id) do
   end
-
-  def update(%JSONSchema{id: id, schema: schema, example: example}),
-    do: update(id, schema, example)
 
   def update(id, schema, example)
       when is_binary(id) and is_map(schema) and is_map(example) do
