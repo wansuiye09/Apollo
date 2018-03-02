@@ -9,6 +9,7 @@ defmodule Apollo.DB.JSONSchema do
   schema "json_schemas" do
     has_many(:json_schema_versions, JSONSchemaVersion)
 
+    field(:active, :boolean)
     field(:meta_schema, :string)
     field(:example, :map)
     field(:schema, :map)
@@ -19,7 +20,7 @@ defmodule Apollo.DB.JSONSchema do
   @doc false
   def changeset(%JSONSchema{} = json_schema, attrs) do
     json_schema
-    |> cast(attrs, [:meta_schema, :schema, :example])
-    |> validate_required([:meta_schema, :schema, :example])
+    |> cast(attrs, [:active, :meta_schema, :schema, :example])
+    |> validate_required([:active, :meta_schema, :schema, :example])
   end
 end

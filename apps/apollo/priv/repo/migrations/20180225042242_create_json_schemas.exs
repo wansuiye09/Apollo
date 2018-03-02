@@ -4,6 +4,7 @@ defmodule Apollo.Repo.Migrations.CreateJsonSchemas do
   def change do
     create table(:json_schemas, primary_key: false) do
       add(:id, :binary_id, primary_key: true)
+      add(:active, :boolean, null: false)
       add(:meta_schema, :string, null: false)
       add(:schema, :map, null: false)
       add(:example, :map, null: false)
