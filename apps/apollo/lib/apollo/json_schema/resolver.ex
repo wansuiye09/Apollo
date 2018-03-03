@@ -34,7 +34,7 @@ defmodule Apollo.JSONSchema.Resolver do
     end
   end
 
-  defp default_raise(url) when is_binary(url) do
-    raise InvalidSchemaError, message: "Reference unsupported - #{url}"
-  end
+  defp default_raise(url)
+       when is_binary(url),
+       do: raise(InvalidSchemaError, message: "Reference unsupported - #{url}")
 end

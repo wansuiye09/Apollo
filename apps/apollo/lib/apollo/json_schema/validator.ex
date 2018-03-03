@@ -8,11 +8,13 @@ defmodule Apollo.JSONSchema.Validator do
     |> validate_example
   end
 
-  def validate(schema) when is_map(schema), do: resolve_schema(schema)
+  def validate(schema)
+      when is_map(schema),
+      do: resolve_schema(schema)
 
-  def validate(%ExJsonSchema.Schema.Root{} = schema, example) when is_map(example) do
-    ExJsonSchema.Validator.validate(schema, example)
-  end
+  def validate(%ExJsonSchema.Schema.Root{} = schema, example)
+      when is_map(example),
+      do: ExJsonSchema.Validator.validate(schema, example)
 
   def validate(schema, example) when is_map(schema) and is_map(example) do
     case resolve_schema(schema) do
