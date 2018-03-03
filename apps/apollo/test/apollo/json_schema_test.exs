@@ -56,6 +56,13 @@ defmodule Apollo.JSONSchemaTest do
     assert %Apollo.DB.JSONSchema{} = result
   end
 
+  test "does not create empty schema and valid example", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+    result = JSONSchema.create(%{}, state[:valid_example])
+
+    assert %Ecto.Changeset{} = result
+  end
+
   test "does not create invalid schema and valid example", state do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
     result = JSONSchema.create(state[:invalid_schema], state[:valid_example])
