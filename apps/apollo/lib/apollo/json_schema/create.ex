@@ -28,7 +28,7 @@ defmodule Apollo.JSONSchema.Create do
 
   defp validate_then_save(changeset) do
     if changeset.valid? do
-      case Validator.process(changeset) do
+      case Validator.validate(changeset) do
         {:ok, changeset, schema} -> save(changeset, schema)
         {:error, changeset, _schema} -> changeset
       end

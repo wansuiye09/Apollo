@@ -1,21 +1,9 @@
 defmodule Apollo.JSONSchema do
-  alias __MODULE__
   alias Apollo.JSONSchema.Create
-
-  @enforce_keys [:schema, :example]
-  defstruct(
-    id: nil,
-    meta_schema: nil,
-    schema: nil,
-    example: nil,
-    versions: nil,
-    errors: nil,
-    inserted_at: nil,
-    updated_at: nil
-  )
+  alias Apollo.JSONSchema.Validator
 
   def create(schema, example) when is_map(schema) and is_map(example) do
-    struct(__MODULE__, Create.process(schema, example) |> Map.from_struct())
+    Create.process(schema, example)
   end
 
   def get_schema(schema_id) when is_binary(schema_id) do
@@ -31,9 +19,8 @@ defmodule Apollo.JSONSchema do
       when is_binary(id) and is_map(schema) and is_map(example) do
   end
 
-  def validate_schema(schema) when is_map(schema) do
-  end
+  def validate(schema) when is_map(schema), do: Validator.validate(schema)
 
-  def validate_against_schema(schema, example) when is_map(schema) and is_map(example) do
-  end
+  def validate(schema, example) when is_map(schema) and is_map(example),
+    do: Validator.validate(schema, example)
 end

@@ -2,24 +2,44 @@ defmodule Apollo.JSONSchema.Validator do
   alias ExJsonSchema.Schema.InvalidSchemaError
   import Ecto.Changeset
 
-  def process(changeset) do
+  def validate(%Ecto.Changeset{} = changeset) do
     changeset
-    |> resolve_schema
+    |> resolve_in_changeset
     |> validate_example
   end
 
-  defp resolve_schema(changeset) do
+  def validate(schema) when is_map(schema), do: resolve_schema(schema)
+
+  def validate(%ExJsonSchema.Schema.Root{} = schema, example) when is_map(example) do
+    ExJsonSchema.Validator.validate(schema, example)
+  end
+
+  def validate(schema, example) when is_map(schema) and is_map(example) do
+    case resolve_schema(schema) do
+      {:ok, resolved_schema} -> validate(resolved_schema, example)
+      {:error, error} -> {:error, error}
+    end
+  end
+
+  defp resolve_in_changeset(changeset) do
+    case get_field(changeset, :schema) |> resolve_schema do
+      {:ok, schema} -> {:ok, changeset, schema}
+      {:error, error} -> {:error, add_error(changeset, :schema, error), nil}
+    end
+  end
+
+  defp resolve_schema(schema) do
     try do
-      {:ok, changeset, get_field(changeset, :schema) |> ExJsonSchema.Schema.resolve()}
+      {:ok, schema |> ExJsonSchema.Schema.resolve()}
     rescue
-      error in InvalidSchemaError -> {:error, add_error(changeset, :schema, error), nil}
+      error in InvalidSchemaError -> {:error, error.message}
     end
   end
 
   defp validate_example({resolved, changeset, schema}) do
     case resolved do
       :ok ->
-        case ExJsonSchema.Validator.validate(schema, get_field(changeset, :example)) do
+        case validate(schema, get_field(changeset, :example)) do
           :ok ->
             {:ok, changeset, schema}
 
@@ -33,5 +53,5 @@ defmodule Apollo.JSONSchema.Validator do
   end
 
   defp add_error_to_example({error, ref}, changeset),
-    do: add_error(changeset, :example, "#{ref} - #{error}")
+    do: add_error(changeset, "example#{ref}", "#{error}")
 end
