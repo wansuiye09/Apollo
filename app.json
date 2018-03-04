@@ -19,7 +19,7 @@
       "value": "prod"
     },
     "EMBER_ENV": {
-      "description": "The Meber environment/mode to build the frontend in.",
+      "description": "The Ember environment/mode to build the frontend in.",
       "value": "production"
     },
     "NPM_CONFIG_PRODUCTION": {
@@ -44,6 +44,9 @@
       "quantity": 1,
       "size": "hobby"
     }
+  },
+  "scripts": {
+    "postdeploy": "mix ecto.setup"
   },
   "buildpacks": [
     {

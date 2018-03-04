@@ -36,5 +36,8 @@ RUN mix do deps.get, deps.compile
 
 # Precompile the for test environment, this should always be last.
 # This should prevent any compiling when running the test suite.
-COPY / /app
+COPY / /app/
 RUN mix compile
+
+# Set the directory
+WORKDIR /app/apps/apollo

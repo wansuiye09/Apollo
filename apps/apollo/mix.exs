@@ -13,7 +13,8 @@ defmodule Apollo.Mixfile do
       elixirc_paths: elixirc_paths(Mix.env()),
       start_permanent: Mix.env() == :prod,
       aliases: aliases(),
-      deps: deps()
+      deps: deps(),
+      test_coverage: [tool: ExCoveralls]
     ]
   end
 
@@ -37,7 +38,10 @@ defmodule Apollo.Mixfile do
   defp deps do
     [
       {:postgrex, ">= 0.0.0"},
-      {:ecto, "~> 2.1"}
+      {:ecto, "~> 2.1"},
+      {:ex_json_schema, "~> 0.5.4"},
+      {:httpoison, "~> 1.0"},
+      {:poison, "~> 3.1"}
     ]
   end
 
