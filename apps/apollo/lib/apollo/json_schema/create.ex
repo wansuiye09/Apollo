@@ -1,50 +1,27 @@
 defmodule Apollo.JSONSchema.Create do
   alias Apollo.Repo
   alias Ecto.Multi
-  alias Apollo.DB.JSONSchema
+  alias Apollo.DB.JSONSchema, as: Schema
   alias Apollo.JSONSchema.CreateVersion
   alias Apollo.JSONSchema.Validator
   alias Apollo.JSONSchema.Helper
 
-  use Ecto.Schema
-  import Ecto.Changeset
-  @primary_key false
-
-  embedded_schema do
-    field(:active, :boolean, default: true)
-    field(:meta_schema, :string, default: Helper.default_schema_url())
-    field(:schema, :map)
-    field(:example, :map)
-  end
-
-  def process(schema, example) when is_map(schema) and is_map(example),
-    do: changeset(%{schema: schema, example: example})
-
-  defp changeset(attrs) do
-    %__MODULE__{}
-    |> cast(attrs, [:schema, :example])
+  def process(schema, example) do
+    %Schema{}
+    |> set_default_values
+    |> Schema.changeset(%{schema: schema, example: example})
     |> Helper.clean_schema()
     |> Helper.reject_empty_schema()
-    |> validate_then_save
+    |> Validator.validate()
+    |> save
   end
 
-  defp validate_then_save(changeset) do
-    if changeset.valid? do
-      case Validator.validate(changeset) do
-        {:ok, changeset, schema} -> save(changeset, schema)
-        {:error, changeset, _schema} -> changeset
-      end
-    else
-      changeset
-    end
-  end
+  defp set_default_values(schema),
+    do: %Schema{schema | meta_schema: Helper.default_schema_url(), active: true}
 
-  defp save(changeset, _schema) do
-    attrs = changeset |> apply_changes |> Map.from_struct()
-    schema_changeset = JSONSchema.changeset(%JSONSchema{}, attrs)
-
+  defp save(changeset) do
     Multi.new()
-    |> Multi.insert(:schema, schema_changeset)
+    |> Multi.insert(:schema, changeset)
     |> CreateVersion.process()
     |> Repo.transaction()
   end

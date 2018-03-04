@@ -10,23 +10,28 @@ defmodule Apollo.JSONSchema.Update do
     record = Apollo.JSONSchema.get_schema(schema_id)
 
     if record == nil do
-      raise Ecto.NoResultsError, queryable: Apollo.JSONSchema.get_schema_query(schema_id)
-    end
-
-    {_status, changeset, _resolved_schema} =
+      not_found()
+    else
       record
       |> Schema.changeset(%{schema: schema, example: example})
       |> Helper.clean_schema()
       |> Helper.reject_empty_schema()
       |> Validator.validate()
-
-    if changeset.valid? do
-      Multi.new()
-      |> Multi.update(:schema, changeset)
-      |> CreateVersion.process()
-      |> Repo.transaction()
-    else
-      changeset
+      |> save
     end
+  end
+
+  defp save(changeset) do
+    Multi.new()
+    |> Multi.update(:schema, changeset)
+    |> CreateVersion.process()
+    |> Repo.transaction()
+  end
+
+  defp not_found do
+    {:error, :schema,
+     %Schema{}
+     |> Schema.changeset(%{})
+     |> Ecto.Changeset.add_error(:id, "not found")}
   end
 end

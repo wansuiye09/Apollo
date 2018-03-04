@@ -3,14 +3,23 @@ defmodule Apollo.JSONSchema.Validator do
   import Ecto.Changeset
 
   def validate(%Ecto.Changeset{} = changeset) do
-    changeset
-    |> resolve_in_changeset
-    |> validate_example
+    {_status, validated_changeset, _resolved_schema} =
+      changeset
+      |> resolve_in_changeset
+      |> validate_example
+
+    validated_changeset
   end
 
   def validate(schema)
       when is_map(schema),
       do: resolve_schema(schema)
+
+  def validate_with_resolve(%Ecto.Changeset{} = changeset) do
+    changeset
+    |> resolve_in_changeset
+    |> validate_example
+  end
 
   def validate(%ExJsonSchema.Schema.Root{} = schema, example)
       when is_map(example),
