@@ -7,7 +7,7 @@ defmodule Apollo.DB.JSONSchema do
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "json_schemas" do
-    has_many(:json_schema_versions, JSONSchemaVersion)
+    has_many(:versions, JSONSchemaVersion)
 
     field(:active, :boolean)
     field(:meta_schema, :string)

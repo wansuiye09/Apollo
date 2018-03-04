@@ -1,7 +1,8 @@
-require IEx
-
 defmodule Apollo.JSONSchemaTest do
   alias Apollo.JSONSchema
+  alias Apollo.DB.JSONSchema, as: Schema
+  alias Apollo.DB.JSONSchemaVersion, as: Version
+
   use ExUnit.Case
   doctest Apollo.JSONSchema
 
@@ -53,7 +54,7 @@ defmodule Apollo.JSONSchemaTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
     result = JSONSchema.create(state[:valid_schema], state[:valid_example])
 
-    assert %Apollo.DB.JSONSchema{} = result
+    assert {:ok, %{schema: %Schema{}, schema_version: %Version{}}} = result
   end
 
   test "does not create empty schema and valid example", state do

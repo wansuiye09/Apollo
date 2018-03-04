@@ -1,6 +1,8 @@
 defmodule Apollo.JSONSchema.Create do
   alias Apollo.Repo
+  alias Ecto.Multi
   alias Apollo.DB.JSONSchema
+  alias Apollo.JSONSchema.CreateVersion
   alias Apollo.JSONSchema.Validator
   alias Apollo.JSONSchema.Helper
 
@@ -38,10 +40,12 @@ defmodule Apollo.JSONSchema.Create do
   end
 
   defp save(changeset, _schema) do
-    attrs = Map.from_struct(changeset |> apply_changes)
+    attrs = changeset |> apply_changes |> Map.from_struct()
+    schema_changeset = JSONSchema.changeset(%JSONSchema{}, attrs)
 
-    case Repo.insert(JSONSchema.changeset(%JSONSchema{}, attrs)) do
-      {_status, schema} -> schema
-    end
+    Multi.new()
+    |> Multi.insert(:schema, schema_changeset)
+    |> CreateVersion.process()
+    |> Repo.transaction()
   end
 end
