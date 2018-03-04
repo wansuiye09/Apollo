@@ -11,20 +11,21 @@ defmodule Apollo.JSONSchema.Validation do
   def process(schema, example) when is_map(schema) and is_map(example) do
     case Resolution.process(schema) do
       {:ok, resolved_schema} -> process(resolved_schema, example)
-      {:error, error} -> {:error, error}
+      {:error, _error_message} = error -> error
     end
   end
 
   def resolved_validation(%Ecto.Changeset{} = changeset) do
     changeset
-    |> reject_empty_schema()
-    |> Formatting.process()
+    |> Formatting.strip()
+    |> empty_check()
+    |> Formatting.fill()
     |> resolve_schema()
     |> validate_example()
   end
 
-  defp reject_empty_schema(changeset) do
-    if Formatting.stripped_schema(changeset) == %{} do
+  defp empty_check(changeset) do
+    if get_field(changeset, :schema) == %{} do
       add_error(changeset, :schema, "Can't be empty.")
     else
       changeset
@@ -40,8 +41,7 @@ defmodule Apollo.JSONSchema.Validation do
     end
   end
 
-  defp validate_example({:error, changeset, resolved_schema}),
-    do: {:error, changeset, resolved_schema}
+  defp validate_example({:error, _changeset, _resolved_schema} = message), do: message
 
   defp validate_example({:ok, changeset, resolved_schema}) do
     case process(resolved_schema, get_field(changeset, :example)) do
