@@ -1,4 +1,4 @@
-defmodule Apollo.JSONSchema.CreateVersion do
+defmodule Apollo.JSONSchema.Versioning do
   alias Apollo.Repo
   alias Apollo.DB.JSONSchema, as: Schema
   alias Apollo.DB.JSONSchemaVersion, as: Version

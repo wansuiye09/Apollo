@@ -1,4 +1,4 @@
-defmodule Apollo.JSONSchema.Validator do
+defmodule Apollo.JSONSchema.Validation do
   alias ExJsonSchema.Schema.InvalidSchemaError
   import Ecto.Changeset
 

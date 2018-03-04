@@ -1,28 +1,29 @@
 defmodule Apollo.JSONSchema do
   alias Apollo.Repo
+  alias Apollo.JSONSchema.Validation
+  alias Apollo.JSONSchema.Persistence
   alias Apollo.DB.JSONSchema, as: Schema
   alias Apollo.DB.JSONSchemaVersion, as: Version
-  alias Apollo.JSONSchema.Create
-  alias Apollo.JSONSchema.Update
-  alias Apollo.JSONSchema.Validator
 
   import Ecto.Query, only: [from: 2]
 
   def validate(schema)
       when is_map(schema),
-      do: Validator.validate(schema)
+      do: Validation.validate(schema)
 
   def validate(schema, example)
       when is_map(schema) and is_map(example),
-      do: Validator.validate(schema, example)
+      do: Validation.validate(schema, example)
 
-  def create(schema, example)
-      when is_map(schema) and is_map(example),
-      do: Create.process(schema, example)
+  def create(schema, example) when is_map(schema) and is_map(example) do
+    %Schema{meta_schema: Persistence.default_schema_url(), active: true}
+    |> Persistence.save(&Ecto.Multi.insert/3, schema, example)
+  end
 
-  def update(id, schema, example)
-      when is_map(schema) and is_map(example),
-      do: Update.process(id, schema, example)
+  def update(id, schema, example) when is_map(schema) and is_map(example) do
+    (get_schema(id) || %Schema{})
+    |> Persistence.save(&Ecto.Multi.update/3, schema, example)
+  end
 
   def get_schema(schema_id), do: Repo.one(get_schema_query(schema_id))
 
