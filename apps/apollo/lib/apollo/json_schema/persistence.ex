@@ -1,22 +1,22 @@
 defmodule Apollo.JSONSchema.Persistence do
   alias Apollo.DB.JSONSchema, as: Schema
 
-  def process(%Schema{} = record, func, schema, example)
-      when is_function(func, 3) and is_map(schema) and is_map(example) do
+  def process(%Schema{} = record, multi, schema, example)
+      when is_function(multi, 3) and is_map(schema) and is_map(example) do
     record
-    |> build_and_validate(schema, example)
-    |> schema_save(func)
+    |> cast(schema, example)
+    |> validate()
+    |> save(multi)
   end
 
-  defp build_and_validate(record, schema, example) do
-    record
-    |> Schema.changeset(%{schema: schema, example: example})
-    |> Apollo.JSONSchema.Validation.process()
-  end
+  defp cast(record, schema, example),
+    do: record |> Schema.changeset(%{schema: schema, example: example})
 
-  defp schema_save(changeset, func) do
+  defp validate(changeset), do: Apollo.JSONSchema.Validation.process(changeset)
+
+  defp save(changeset, multi) do
     Ecto.Multi.new()
-    |> func.(:schema, changeset)
+    |> multi.(:schema, changeset)
     |> Apollo.JSONSchema.Versioning.process()
     |> Apollo.Repo.transaction()
   end

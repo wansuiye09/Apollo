@@ -26,9 +26,9 @@ defmodule Apollo.JSONSchema.Versioning do
     1 +
       Repo.one(
         from(
-          schm in Schema,
-          join: ver in assoc(schm, :versions),
-          where: schm.id == ^id,
+          sch in Schema,
+          join: ver in assoc(sch, :versions),
+          where: sch.id == ^id,
           select: count(ver.id)
         )
       )
