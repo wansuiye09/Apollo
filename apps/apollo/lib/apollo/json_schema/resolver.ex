@@ -1,7 +1,8 @@
 defmodule Apollo.JSONSchema.Resolver do
-  import Ecto.Query, only: [from: 2]
-  alias ExJsonSchema.Schema.InvalidSchemaError
   @remote_protocols ["http", "https"]
+  alias ExJsonSchema.Schema.InvalidSchemaError
+
+  import Ecto.Query, only: [from: 2]
 
   def remote_resolve(url) when is_binary(url) do
     if Enum.member?(@remote_protocols, URI.parse(url).scheme) do
@@ -12,29 +13,28 @@ defmodule Apollo.JSONSchema.Resolver do
   end
 
   def local_resolve(url) when is_binary(url) do
-    uri = URI.parse(url)
+    URI.parse(url)
+    |> query(url)
+    |> Apollo.Repo.one() || not_found(url)
+  end
 
-    table =
-      case uri.scheme do
-        "schema" -> "json_schemas"
-        "schema-version" -> "json_schema_versions"
-      end
+  defp query(uri, url) do
+    from(
+      schm in (get_table(uri) || default_raise(url)),
+      where: schm.id == type(^uri.host, :binary_id),
+      select: schm.schema
+    )
+  end
 
-    if table do
-      query =
-        from(
-          schm in table,
-          where: schm.id == type(^uri.host, :binary_id),
-          select: schm.schema
-        )
-
-      Apollo.Repo.one(query) || raise InvalidSchemaError, message: "Reference not found - #{url}"
-    else
-      default_raise(url)
+  defp get_table(uri) do
+    case uri.scheme do
+      "schema" -> "json_schemas"
+      "schema-version" -> "json_schema_versions"
     end
   end
 
-  defp default_raise(url)
-       when is_binary(url),
-       do: raise(InvalidSchemaError, message: "Reference unsupported - #{url}")
+  defp not_found(url), do: raise(InvalidSchemaError, message: "Reference not found - #{url}")
+
+  defp default_raise(url),
+    do: raise(InvalidSchemaError, message: "Reference unsupported - #{url}")
 end
