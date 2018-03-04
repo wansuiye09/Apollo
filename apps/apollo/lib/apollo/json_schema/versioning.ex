@@ -5,7 +5,8 @@ defmodule Apollo.JSONSchema.Versioning do
 
   import Ecto.Query, only: [from: 2]
 
-  def process(multi), do: Ecto.Multi.run(multi, :schema_version, &create_version/1)
+  def process(%Ecto.Multi{} = multi),
+    do: Ecto.Multi.run(multi, :schema_version, &create_version/1)
 
   defp create_version(%{schema: %Schema{} = schema}) do
     schema

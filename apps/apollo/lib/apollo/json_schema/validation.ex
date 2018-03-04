@@ -64,5 +64,5 @@ defmodule Apollo.JSONSchema.Validation do
   end
 
   defp add_error_to_example({error, ref}, changeset),
-    do: add_error(changeset, "example#{ref}", "#{error}")
+    do: add_error(changeset, "example#{ref}", error)
 end

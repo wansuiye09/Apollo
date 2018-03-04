@@ -2,9 +2,11 @@ defmodule Apollo.JSONSchema.Persistence do
   @default_schema_url "http://json-schema.org/draft-04/schema#"
   def default_schema_url, do: @default_schema_url
 
+  alias Apollo.DB.JSONSchema, as: Schema
   import Ecto.Changeset
 
-  def save(record, func, schema, example) do
+  def save(%Schema{} = record, func, schema, example)
+      when is_function(func, 3) and is_map(schema) and is_map(example) do
     record
     |> build_and_validate(schema, example)
     |> schema_save(func)
@@ -12,7 +14,7 @@ defmodule Apollo.JSONSchema.Persistence do
 
   defp build_and_validate(record, schema, example) do
     record
-    |> Apollo.DB.JSONSchema.changeset(%{schema: schema, example: example})
+    |> Schema.changeset(%{schema: schema, example: example})
     |> clean_schema()
     |> reject_empty_schema()
     |> Apollo.JSONSchema.Validation.validate()
