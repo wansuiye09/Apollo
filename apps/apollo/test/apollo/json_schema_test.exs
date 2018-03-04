@@ -1,8 +1,10 @@
 defmodule Apollo.JSONSchemaTest do
+  alias Apollo.Repo
   alias Apollo.JSONSchema
   alias Apollo.DB.JSONSchema, as: Schema
   alias Apollo.DB.JSONSchemaVersion, as: Version
 
+  import Ecto.Query, only: [from: 2]
   use ExUnit.Case
   doctest Apollo.JSONSchema
 
@@ -101,6 +103,64 @@ defmodule Apollo.JSONSchemaTest do
   test "does not create valid schema and invalid example", state do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
     result = JSONSchema.create(state[:valid_schema], state[:invalid_example])
+
+    assert %Ecto.Changeset{} = result
+  end
+
+  test "update valid schema and valid example", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
+    {:ok, %{schema: schema, schema_version: version}} =
+      JSONSchema.create(state[:valid_schema], state[:valid_example])
+
+    result = JSONSchema.update(schema.id, state[:valid_schema], state[:valid_example])
+
+    version_count =
+      Repo.one(
+        from(ver in Version, where: ver.json_schema_id == ^schema.id, select: count(ver.id))
+      )
+
+    assert {:ok, %{schema: %Schema{}, schema_version: %Version{}}} = result
+    assert version_count == 2
+  end
+
+  test "raises an error when given an invalid ID to update", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
+    assert_raise Ecto.NoResultsError, fn ->
+      JSONSchema.update(Ecto.UUID.generate(), state[:valid_schema], state[:valid_example])
+    end
+  end
+
+  test "does not update empty schema and valid example", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
+    {:ok, %{schema: schema, schema_version: version}} =
+      JSONSchema.create(state[:valid_schema], state[:valid_example])
+
+    result = JSONSchema.update(schema.id, %{}, state[:valid_example])
+
+    assert %Ecto.Changeset{} = result
+  end
+
+  test "does not update invalid schema and valid example", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
+    {:ok, %{schema: schema, schema_version: version}} =
+      JSONSchema.create(state[:valid_schema], state[:valid_example])
+
+    result = JSONSchema.update(schema.id, state[:invalid_schema], state[:valid_example])
+
+    assert %Ecto.Changeset{} = result
+  end
+
+  test "does not update valid schema and invalid example", state do
+    :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
+
+    {:ok, %{schema: schema, schema_version: version}} =
+      JSONSchema.create(state[:valid_schema], state[:valid_example])
+
+    result = JSONSchema.update(schema.id, state[:valid_schema], state[:invalid_example])
 
     assert %Ecto.Changeset{} = result
   end
