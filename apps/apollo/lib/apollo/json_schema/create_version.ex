@@ -8,14 +8,16 @@ defmodule Apollo.JSONSchema.CreateVersion do
   def process(multi), do: Ecto.Multi.run(multi, :schema_version, &create_version/1)
 
   defp create_version(%{schema: %Schema{} = schema}) do
-    version_attrs =
-      schema
-      |> Map.from_struct()
-      |> Map.put(:json_schema_id, schema.id)
-      |> Map.put(:version, next_version_number(schema))
+    schema
+    |> Map.from_struct()
+    |> Map.put(:json_schema_id, schema.id)
+    |> Map.put(:version, next_version_number(schema))
+    |> save
+  end
 
+  defp save(attrs) do
     %Version{}
-    |> Version.changeset(version_attrs)
+    |> Version.changeset(attrs)
     |> Repo.insert()
   end
 

@@ -127,6 +127,7 @@ defmodule Apollo.JSONSchemaTest do
     :ok = Ecto.Adapters.SQL.Sandbox.checkout(Apollo.Repo)
     result = JSONSchema.update(Ecto.UUID.generate(), state[:valid_schema], state[:valid_example])
 
+    assert :error == result |> elem(0)
     assert %Ecto.Changeset{} = result |> elem(2)
   end
 
