@@ -1,26 +1,11 @@
 defmodule Apollo.JSONSchema do
+  alias Apollo.Repo
+  alias Apollo.DB.JSONSchema, as: Schema
+  alias Apollo.DB.JSONSchemaVersion, as: Version
   alias Apollo.JSONSchema.Create
   alias Apollo.JSONSchema.Validator
 
-  def create(schema, example)
-      when is_map(schema) and is_map(example),
-      do: Create.process(schema, example)
-
-  def get_schema(schema_id)
-      when is_binary(schema_id),
-      do: nil
-
-  def get_schema_version(schema_version_id)
-      when is_binary(schema_version_id),
-      do: nil
-
-  def get_current_version_for(schema_id)
-      when is_binary(schema_id),
-      do: nil
-
-  def update(id, schema, example)
-      when is_binary(id) and is_map(schema) and is_map(example),
-      do: nil
+  import Ecto.Query, only: [from: 2]
 
   def validate(schema)
       when is_map(schema),
@@ -29,4 +14,29 @@ defmodule Apollo.JSONSchema do
   def validate(schema, example)
       when is_map(schema) and is_map(example),
       do: Validator.validate(schema, example)
+
+  def create(schema, example)
+      when is_map(schema) and is_map(example),
+      do: Create.process(schema, example)
+
+  def update(id, schema, example)
+      when is_map(schema) and is_map(example),
+      do: nil
+
+  def get_schema(schema_id),
+    do: Repo.one(from(sch in Schema, where: sch.id == type(^schema_id, :binary_id)))
+
+  def get_version(version_id),
+    do: Repo.one(from(ver in Version, where: ver.id == type(^version_id, :binary_id)))
+
+  def get_current_version(schema_id) do
+    Repo.one(
+      from(
+        ver in Version,
+        where: ver.json_schema_id == type(^schema_id, :binary_id),
+        order_by: [desc: ver.version],
+        limit: 1
+      )
+    )
+  end
 end
