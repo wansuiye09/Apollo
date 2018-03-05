@@ -14,7 +14,7 @@ config :apollo_web,
 config :apollo_web, ApolloWeb.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "eNKNtgRPrmXhHrYtjLDdAHXajyRdNCrdujnosYJf5bjhd5P88IXwHBacpJVQphg6",
-  render_errors: [view: ApolloWeb.ErrorView, accepts: ~w(json)],
+  render_errors: [view: ApolloWeb.ErrorView, accepts: ~w(json json-api)],
   pubsub: [name: ApolloWeb.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
@@ -23,6 +23,11 @@ config :logger, :console,
   metadata: [:request_id]
 
 config :apollo_web, :generators, context_app: :apollo, binary_id: true
+
+# JSON:API Config
+config :phoenix, :format_encoders, "json-api": Poison
+
+config :mime, :types, %{"application/vnd.api+json" => ["json-api"]}
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

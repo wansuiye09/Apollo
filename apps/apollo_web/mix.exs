@@ -43,7 +43,9 @@ defmodule ApolloWeb.Mixfile do
       {:phoenix_ecto, "~> 3.2"},
       {:gettext, "~> 0.11"},
       {:apollo, in_umbrella: true},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:ja_serializer, "~> 0.12.0",
+       github: "vt-elixir/ja_serializer", ref: "47d559a70d7ec4398b8f7cd5a3dfeaa717b95eb0"}
     ]
   end
 
