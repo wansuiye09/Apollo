@@ -7,8 +7,8 @@ defmodule ApolloWeb.Router do
     plug(JaSerializer.Deserializer)
   end
 
-  scope "/api/v1", ApolloWeb do
+  scope "/api/v1", ApolloWeb.V1 do
     pipe_through(:api)
-    resources("/json_schemas", JSONSchemaController, except: [:new, :edit])
+    resources("/schemas", SchemaController, except: [:new, :edit])
   end
 end
