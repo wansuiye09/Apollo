@@ -1,7 +1,6 @@
 defmodule Apollo.JSONSchema do
   alias Apollo.Repo
   alias Apollo.JSONSchema.Resolution
-  alias Apollo.JSONSchema.Formatting
   alias Apollo.JSONSchema.Validation
   alias Apollo.JSONSchema.Persistence
   alias Apollo.DB.JSONSchema, as: Schema
@@ -38,6 +37,11 @@ defmodule Apollo.JSONSchema do
 
   def get_schema_query(schema_id),
     do: from(sch in Schema, where: sch.id == type(^schema_id, :binary_id))
+
+  def get_versions(schema_id), do: get_versions_query(schema_id) |> Repo.all()
+
+  def get_versions_query(schema_id),
+    do: from(ver in Version, where: ver.json_schema_id == type(^schema_id, :binary_id))
 
   def get_version(version_id), do: get_version_query(version_id) |> Repo.one!()
 
