@@ -1,5 +1,3 @@
-require IEx
-
 defmodule ApolloWeb.V1.SchemaController do
   use ApolloWeb, :controller
 
@@ -14,10 +12,8 @@ defmodule ApolloWeb.V1.SchemaController do
     render(conn, "index.json-api", data: schemas)
   end
 
-  def create(conn, %{
-        "data" => data = %{"type" => "schema", "attributes" => schema_params}
-      }) do
-    with {:ok, %Schema{} = schema} <- SchemaService.create(schema_params) do
+  def create(conn, %{"data" => data = %{"type" => "schema"}}) do
+    with {:ok, %Schema{} = schema} <- SchemaService.create(Params.to_attributes(data)) do
       conn
       |> put_status(:created)
       |> put_resp_header("location", schema_path(conn, :show, schema))
@@ -30,13 +26,10 @@ defmodule ApolloWeb.V1.SchemaController do
     render(conn, "show.json-api", data: schema)
   end
 
-  def update(conn, %{
-        "id" => id,
-        "data" => data = %{"type" => "schema", "attributes" => schema_params}
-      }) do
+  def update(conn, %{"id" => id, "data" => data = %{"type" => "schema"}}) do
     schema = SchemaService.get!(id)
 
-    with {:ok, %Schema{} = schema} <- SchemaService.update(schema, schema_params) do
+    with {:ok, %Schema{} = schema} <- SchemaService.update(schema, Params.to_attributes(data)) do
       render(conn, "show.json-api", data: schema)
     end
   end

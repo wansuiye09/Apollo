@@ -1,5 +1,3 @@
-require IEx
-
 defmodule ApolloWeb.V1.SchemaControllerTest do
   use ApolloWeb.ConnCase
   import Apollo.DataCase
@@ -35,16 +33,15 @@ defmodule ApolloWeb.V1.SchemaControllerTest do
   end
 
   test "creates schema and renders schema when data is valid", %{conn: conn} do
-    create_data = %{
-      "meta" => %{},
-      "data" => %{
-        "type" => "schema",
-        "attributes" => @create_attrs,
-        "relationships" => relationships()
-      }
-    }
-
-    conn = post(conn, schema_path(conn, :create), create_data)
+    conn =
+      post(conn, schema_path(conn, :create), %{
+        "meta" => %{},
+        "data" => %{
+          "type" => "schema",
+          "attributes" => @create_attrs,
+          "relationships" => relationships()
+        }
+      })
 
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -73,24 +70,23 @@ defmodule ApolloWeb.V1.SchemaControllerTest do
   test "updates chosen schema and renders schema when data is valid", %{conn: conn} do
     %Schema{id: id} = schema = fixture(:schema)
 
-    update_data = %{
-      "meta" => %{},
-      "data" => %{
-        "type" => "schema",
-        "id" => "#{schema.id}",
-        "attributes" => @update_attrs,
-        "relationships" => relationships()
-      }
-    }
-
-    conn = put(conn, schema_path(conn, :update, schema), update_data)
+    conn =
+      put(conn, schema_path(conn, :update, schema), %{
+        "meta" => %{},
+        "data" => %{
+          "type" => "schema",
+          "id" => "#{schema.id}",
+          "attributes" => @update_attrs,
+          "relationships" => relationships()
+        }
+      })
 
     conn = get(conn, schema_path(conn, :show, id))
     data = json_response(conn, 200)["data"]
     assert data["id"] == "#{id}"
     assert data["type"] == "schema"
-    assert data["attributes"]["example"] == update_data["data"]["attributes"].example
-    assert data["attributes"]["schema"] == update_data["data"]["attributes"].schema
+    assert data["attributes"]["example"] == @update_attrs.example
+    assert data["attributes"]["schema"] == @update_attrs.schema
   end
 
   test "does not update chosen schema and renders errors when data is invalid", %{conn: conn} do
