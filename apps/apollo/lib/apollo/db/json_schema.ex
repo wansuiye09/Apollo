@@ -3,14 +3,15 @@ defmodule Apollo.DB.JSONSchema do
   import Ecto.Changeset
   alias Apollo.DB.JSONSchema
   alias Apollo.DB.JSONSchemaVersion
+  alias Apollo.JSONSchema.Formatting
 
   @primary_key {:id, :binary_id, autogenerate: true}
   @foreign_key_type :binary_id
   schema "json_schemas" do
     has_many(:versions, JSONSchemaVersion)
 
-    field(:active, :boolean)
-    field(:meta_schema, :string)
+    field(:active, :boolean, default: true)
+    field(:meta_schema, :string, default: Formatting.default_schema_url())
     field(:example, :map)
     field(:schema, :map)
 

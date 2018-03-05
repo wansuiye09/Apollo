@@ -50,4 +50,41 @@ defmodule Apollo.DataCase do
       end)
     end)
   end
+
+  def valid_json_schema do
+    %{
+      "definitions" => %{
+        "address" => %{
+          "type" => "object",
+          "properties" => %{
+            "street-address" => %{"type" => "string"},
+            "city" => %{"type" => "string"},
+            "state" => %{"type" => "string"}
+          },
+          "required" => ["street-address", "city", "state"]
+        }
+      },
+      "type" => "object",
+      "properties" => %{
+        "billing-address" => %{"$ref" => "#/definitions/address"},
+        "shipping-address" => %{"$ref" => "#/definitions/address"},
+        "a" => %{"type" => "integer"}
+      },
+      "required" => ["billing-address"]
+    }
+  end
+
+  def valid_json_schema_example do
+    %{
+      "a" => :rand.uniform(1000),
+      "billing-address" => %{
+        "street-address" => "1st Street SE",
+        "city" => "Washington",
+        "state" => "DC"
+      }
+    }
+  end
+
+  def invalid_json_schema, do: %{"type" => "foobar"}
+  def invalid_json_schema_example, do: %{"a" => "bob"}
 end

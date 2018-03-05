@@ -17,6 +17,7 @@ defmodule Apollo.JSONSchema.Validation do
 
   def resolved_validation(%Ecto.Changeset{} = changeset) do
     changeset
+    |> validate_inclusion(:meta_schema, [Formatting.default_schema_url()])
     |> Formatting.strip()
     |> empty_check()
     |> Formatting.fill()

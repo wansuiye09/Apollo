@@ -1,17 +1,15 @@
+require IEx
+
 defmodule ApolloWeb.V1.SchemaControllerTest do
   use ApolloWeb.ConnCase
+  import Apollo.DataCase
 
   alias ApolloWeb.V1.SchemaService
   alias Apollo.DB.JSONSchema, as: Schema
 
-  @create_attrs %{active: true, example: %{}, meta_schema: "some meta_schema", schema: %{}}
-  @update_attrs %{
-    active: false,
-    example: %{},
-    meta_schema: "some updated meta_schema",
-    schema: %{}
-  }
-  @invalid_attrs %{active: nil, example: nil, meta_schema: nil, schema: nil}
+  @create_attrs %{example: valid_json_schema_example(), schema: valid_json_schema()}
+  @update_attrs %{example: valid_json_schema_example(), schema: valid_json_schema()}
+  @invalid_attrs %{example: invalid_json_schema_example(), schema: invalid_json_schema()}
 
   def fixture(:schema) do
     {:ok, schema} = SchemaService.create(@create_attrs)
@@ -37,15 +35,16 @@ defmodule ApolloWeb.V1.SchemaControllerTest do
   end
 
   test "creates schema and renders schema when data is valid", %{conn: conn} do
-    conn =
-      post(conn, schema_path(conn, :create), %{
-        "meta" => %{},
-        "data" => %{
-          "type" => "schema",
-          "attributes" => @create_attrs,
-          "relationships" => relationships()
-        }
-      })
+    create_data = %{
+      "meta" => %{},
+      "data" => %{
+        "type" => "schema",
+        "attributes" => @create_attrs,
+        "relationships" => relationships()
+      }
+    }
+
+    conn = post(conn, schema_path(conn, :create), create_data)
 
     assert %{"id" => id} = json_response(conn, 201)["data"]
 
@@ -53,9 +52,7 @@ defmodule ApolloWeb.V1.SchemaControllerTest do
     data = json_response(conn, 200)["data"]
     assert data["id"] == id
     assert data["type"] == "schema"
-    assert data["attributes"]["active"] == @create_attrs.active
     assert data["attributes"]["example"] == @create_attrs.example
-    assert data["attributes"]["meta-schema"] == @create_attrs.meta_schema
     assert data["attributes"]["schema"] == @create_attrs.schema
   end
 
@@ -76,25 +73,24 @@ defmodule ApolloWeb.V1.SchemaControllerTest do
   test "updates chosen schema and renders schema when data is valid", %{conn: conn} do
     %Schema{id: id} = schema = fixture(:schema)
 
-    conn =
-      put(conn, schema_path(conn, :update, schema), %{
-        "meta" => %{},
-        "data" => %{
-          "type" => "schema",
-          "id" => "#{schema.id}",
-          "attributes" => @update_attrs,
-          "relationships" => relationships()
-        }
-      })
+    update_data = %{
+      "meta" => %{},
+      "data" => %{
+        "type" => "schema",
+        "id" => "#{schema.id}",
+        "attributes" => @update_attrs,
+        "relationships" => relationships()
+      }
+    }
+
+    conn = put(conn, schema_path(conn, :update, schema), update_data)
 
     conn = get(conn, schema_path(conn, :show, id))
     data = json_response(conn, 200)["data"]
     assert data["id"] == "#{id}"
     assert data["type"] == "schema"
-    assert data["attributes"]["active"] == @update_attrs.active
-    assert data["attributes"]["example"] == @update_attrs.example
-    assert data["attributes"]["meta-schema"] == @update_attrs.meta_schema
-    assert data["attributes"]["schema"] == @update_attrs.schema
+    assert data["attributes"]["example"] == update_data["data"]["attributes"].example
+    assert data["attributes"]["schema"] == update_data["data"]["attributes"].schema
   end
 
   test "does not update chosen schema and renders errors when data is invalid", %{conn: conn} do

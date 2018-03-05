@@ -50,9 +50,10 @@ defmodule ApolloWeb.V1.SchemaService do
 
   """
   def create(attrs \\ %{}) do
-    %Schema{}
-    |> Schema.changeset(attrs)
-    |> Repo.insert()
+    case Apollo.JSONSchema.create(attrs) do
+      {:error, :schema, changeset, _something} -> {:error, changeset}
+      {:ok, %{schema: schema}} -> {:ok, schema}
+    end
   end
 
   @doc """
@@ -68,9 +69,10 @@ defmodule ApolloWeb.V1.SchemaService do
 
   """
   def update(%Schema{} = schema, attrs) do
-    schema
-    |> Schema.changeset(attrs)
-    |> Repo.update()
+    case Apollo.JSONSchema.update(schema, attrs) do
+      {:error, :schema, changeset, _something} -> {:error, changeset}
+      {:ok, %{schema: schema}} -> {:ok, schema}
+    end
   end
 
   @doc """

@@ -6,14 +6,9 @@ defmodule ApolloWeb.V1.SchemaServiceTest do
   describe "schemas" do
     alias Apollo.DB.JSONSchema, as: Schema
 
-    @valid_attrs %{active: true, example: %{}, meta_schema: "some meta_schema", schema: %{}}
-    @update_attrs %{
-      active: false,
-      example: %{},
-      meta_schema: "some updated meta_schema",
-      schema: %{}
-    }
-    @invalid_attrs %{active: nil, example: nil, meta_schema: nil, schema: nil}
+    @valid_attrs %{example: valid_json_schema_example(), schema: valid_json_schema()}
+    @update_attrs @valid_attrs
+    @invalid_attrs %{example: invalid_json_schema_example(), schema: invalid_json_schema()}
 
     def schema_fixture(attrs \\ %{}) do
       {:ok, schema} =
@@ -36,10 +31,8 @@ defmodule ApolloWeb.V1.SchemaServiceTest do
 
     test "create/1 with valid data creates a schema" do
       assert {:ok, %Schema{} = schema} = SchemaService.create(@valid_attrs)
-      assert schema.active == true
-      assert schema.example == %{}
-      assert schema.meta_schema == "some meta_schema"
-      assert schema.schema == %{}
+      assert schema.example == @valid_attrs.example
+      assert schema.schema == @valid_attrs.schema
     end
 
     test "create/1 with invalid data returns error changeset" do
@@ -50,10 +43,8 @@ defmodule ApolloWeb.V1.SchemaServiceTest do
       schema = schema_fixture()
       assert {:ok, schema} = SchemaService.update(schema, @update_attrs)
       assert %Schema{} = schema
-      assert schema.active == false
-      assert schema.example == %{}
-      assert schema.meta_schema == "some updated meta_schema"
-      assert schema.schema == %{}
+      assert schema.example == @update_attrs.example
+      assert schema.schema == @update_attrs.schema
     end
 
     test "update/2 with invalid data returns error changeset" do

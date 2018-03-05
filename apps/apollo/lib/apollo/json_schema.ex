@@ -16,27 +16,35 @@ defmodule Apollo.JSONSchema do
       when is_map(schema) and is_map(example),
       do: Validation.process(schema, example)
 
-  def create(schema, example) when is_map(schema) and is_map(example) do
-    %Schema{meta_schema: Formatting.default_schema_url(), active: true}
-    |> Persistence.process(&Ecto.Multi.insert/3, schema, example)
+  def create(attrs \\ %{}) do
+    %Schema{}
+    |> Persistence.process(&Ecto.Multi.insert/3, attrs)
   end
+
+  def create(schema, example) when is_map(schema) and is_map(example) do
+    %Schema{schema: schema, example: example}
+    |> Persistence.process(&Ecto.Multi.insert/3)
+  end
+
+  def update(%Schema{} = record, attrs \\ %{}),
+    do: record |> Persistence.process(&Ecto.Multi.update/3, attrs)
 
   def update(id, schema, example) when is_map(schema) and is_map(example) do
-    (get_schema(id) || %Schema{})
-    |> Persistence.process(&Ecto.Multi.update/3, schema, example)
+    get_schema(id)
+    |> Persistence.process(&Ecto.Multi.update/3, %{schema: schema, example: example})
   end
 
-  def get_schema(schema_id), do: get_schema_query(schema_id) |> Repo.one()
+  def get_schema(schema_id), do: get_schema_query(schema_id) |> Repo.one!()
 
   def get_schema_query(schema_id),
     do: from(sch in Schema, where: sch.id == type(^schema_id, :binary_id))
 
-  def get_version(version_id), do: get_version_query(version_id) |> Repo.one()
+  def get_version(version_id), do: get_version_query(version_id) |> Repo.one!()
 
   def get_version_query(version_id),
     do: from(ver in Version, where: ver.id == type(^version_id, :binary_id))
 
-  def get_current_version(schema_id), do: get_current_version_query(schema_id) |> Repo.one()
+  def get_current_version(schema_id), do: get_current_version_query(schema_id) |> Repo.one!()
 
   def get_current_version_query(schema_id) do
     from(

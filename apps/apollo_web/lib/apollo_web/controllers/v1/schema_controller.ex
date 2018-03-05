@@ -1,3 +1,5 @@
+require IEx
+
 defmodule ApolloWeb.V1.SchemaController do
   use ApolloWeb, :controller
 
